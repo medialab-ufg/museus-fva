@@ -107,21 +107,24 @@ fva.controller('avaliacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionVa
         isValid = !$scope.displayMidiaWarning;
         
         if (isValid) {
-            $scope.saveQuestionario = saveFvaQuestions.save();
-            
-            if($scope.saveQuestionario === true){
-                $state.go('revisao');
-            }
+            $state.go('revisao');
         }
     }
 }]);
 
-fva.controller('revisaoCtrl', ['$scope','$rootScope', 'fvaQuestions', function ($scope, $rootScope, fvaQuestions) {
+fva.controller('revisaoCtrl', ['$scope','$rootScope', 'fvaQuestions', 'saveFvaQuestions', function ($scope, $rootScope, fvaQuestions, saveFvaQuestions) {
     if($scope.$root.respostas){
         $scope.respostasFVA = $scope.$root.respostas;
+        $scope.showReviewAlert = false;
     }
     else{
         $scope.respostasFVA = fvaQuestions;
+        $scope.showReviewAlert = true;
+    }
+
+    $scope.enviarFVA = function(){
+        saveFvaQuestions.save();
+        $scope.showReviewAlert = false;
     }
 }]);
 
@@ -131,31 +134,52 @@ fva.config(['$stateProvider', function ($stateProvider) {
     $stateProvider
         .state('index', {
             controller: 'indexCtrl',
-            templateUrl: pluginTemplatePath + '/index.html'
+            templateUrl: pluginTemplatePath + '/index.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('termo-compromisso', {
             controller: 'termoCompromissoCtrl',
-            templateUrl: pluginTemplatePath + '/termo-compromisso.html'
+            templateUrl: pluginTemplatePath + '/termo-compromisso.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('intro', {
             controller: 'introCtrl',
-            templateUrl: pluginTemplatePath + '/intro.html'
+            templateUrl: pluginTemplatePath + '/intro.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('responsavel', {
             controller: 'responsavelCtrl',
-            templateUrl: pluginTemplatePath + '/responsavel.html'
+            templateUrl: pluginTemplatePath + '/responsavel.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('visitacao', {
             controller: 'visitacaoCtrl',
-            templateUrl: pluginTemplatePath + '/visitacao.html'
+            templateUrl: pluginTemplatePath + '/visitacao.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('avaliacao', {
             controller: 'avaliacaoCtrl',
-            templateUrl: pluginTemplatePath + '/avaliacao.html'
+            templateUrl: pluginTemplatePath + '/avaliacao.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
         .state('revisao', {
             controller: 'revisaoCtrl',
-            templateUrl: pluginTemplatePath + '/revisao.html'
+            templateUrl: pluginTemplatePath + '/revisao.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
         })
 }]);
 
@@ -194,10 +218,13 @@ fva.service('questionValidator', function () {
     }
 });
 
-fva.service('saveFvaQuestions', ['$http', '$state', 'fvaQuestions', function($http, $state, fvaQuestions){
+fva.service('saveFvaQuestions', ['$http', 'fvaQuestions', function($http, fvaQuestions){
     this.save = function(){
         $http.post(MapasCulturais.createUrl('space', 'fvaSave', [MapasCulturais.entity.id]), angular.toJson(fvaQuestions)).then(function successCallback(response){
-            $state.go('revisao');
+            MapasCulturais.Messages.success('Formulário enviado com sucesso!');
+        },
+        function errorCallback(){
+            MapasCulturais.Messages.error('Houve um erro no servidor. Tente enviar novamente dentro de alguns minutos.');
         });
     }
 }]);

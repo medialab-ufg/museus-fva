@@ -33,3 +33,12 @@ li {
     font-weight: bold;
     margin-top: 15px;
 }
+
+.confirmacao{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#enviarBtn{
+    float: right;
+}
