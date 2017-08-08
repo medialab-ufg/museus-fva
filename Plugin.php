@@ -9,6 +9,10 @@ class Plugin extends \MapasCulturais\Plugin {
     public function _init() {
         $app = App::i();
         
+        // Fazer funcionar apenas no tema de museus:
+        if (get_class($app->view) != 'MapasMuseus\Theme')
+            return;
+
         $plugin = $this;
         
         $app->hook('template(space.single.tabs):end', function() use($app){
