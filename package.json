@@ -1,0 +1,33 @@
+{
+  "name": "FVA",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "./node_modules/karma/bin/karma start",
+    "watch": "webpack --watch",
+    "start": "webpack-dev-server --open"
+  },
+  "keywords": [],
+  "author": "Ari Mourão",
+  "license": "MIT",
+  "devDependencies": {
+    "angular-mocks": "^1.6.6",
+    "css-loader": "^0.28.5",
+    "file-loader": "^0.11.2",
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^2.0.4",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "angular": "^1.6.6",
+    "lodash": "^4.17.4"
+  }
+}
