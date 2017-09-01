@@ -5,7 +5,9 @@ na página do espaço do museu.
 
 ## Ativação
 
-Para ativar este plugin, adicione a pasta 'Fva' em 'src/protected/application/plugins'.
+Para ativar este plugin, clone o repositório em 'src/protected/application/plugins' com o comando:
+`git clone --depth=1 https://github.com/medialab-ufg/museus-fva.git Fva`
+
 Feito isto, configure seu config.php:
 
 ```PHP

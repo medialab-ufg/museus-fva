@@ -2,9 +2,6 @@ describe('Testes de Controllers e Services do questionario FVA', function() {
     //injetando módulo e suas dependências
     beforeEach(function() {
         angular.mock.module('ng.fva');
-        /* angular.mock.module(function($provide) {
-            $provide.value('MapasCulturais', _mapasCulturais)
-        }); */
       });
 
     var $controller;
