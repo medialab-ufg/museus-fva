@@ -18,3 +18,7 @@ Feito isto, configure seu config.php:
 ],
 
 ```
+## Desenvolvimento
+O plugin contém testes unitários para os controllers do Angular. Para rodá-los, é necessário instalar NodeJS 6+ (https://nodejs.org/en/download/).
+Após feita a instalação, na pasta do plugin execute o comando `npm install` para instalar as dependencias e `npm test`
+para começar a rodar os testes.
