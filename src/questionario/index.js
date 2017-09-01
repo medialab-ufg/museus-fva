@@ -1,5 +1,5 @@
 angular.module('app', [])
-.controller('PasswordController', function PasswordController($scope) {
+.controller('PasswordController', ['$scope', function PasswordController($scope) {
   $scope.password = '';
   $scope.grade = function() {
     var size = $scope.password.length;
@@ -11,4 +11,4 @@ angular.module('app', [])
       $scope.strength = 'weak';
     }
   };
-});
+}]);

@@ -16,8 +16,13 @@ module.exports = function(config) {
     files: [
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
-      'src/index.js',
-      'test/*spec.js'
+      'node_modules/@uirouter/angularjs/release/angular-ui-router.js',
+      'node_modules/angular-ui-mask/dist/mask.js',
+      //'../../themes/BaseV1/assets/js/mapasculturais.js',
+      //'src/questionario/index.js',
+      //'test/doc_test.spec.js'
+      'src/questionario/ng.fva.js',
+      'src/**/*.spec.js'
     ],
 
 
@@ -29,6 +34,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      
     },
 
 
@@ -48,7 +54,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DEBUG,
+    logLevel: config.LOG_INFO,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -57,8 +63,32 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
 
+     // you can define custom flags
+     customLaunchers: {
+      'PhantomJS_custom': {
+        base: 'PhantomJS',
+        options: {
+          windowName: 'my-window',
+          settings: {
+            webSecurityEnabled: false
+          },
+        },
+        flags: ['--load-images=true'],
+        debug: true
+      },
+      Chrome_with_debugging: {
+        base:'ChromeHeadless',
+        flags: ['--remote-debugging-port=9222'],
+        debug: true
+      }
+    },
+
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

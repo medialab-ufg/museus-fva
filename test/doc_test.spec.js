@@ -1,5 +1,8 @@
 describe('PasswordController', function() {
-  beforeEach(module('app'));
+  beforeEach(function() {
+    angular.mock.module('app');
+    
+  });
 
   var $controller;
 
