@@ -76,13 +76,8 @@ class Plugin extends \MapasCulturais\Plugin {
                 
                 $app->view->enqueueScript('app', 'angular-ui-mask', 'js/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', 'js/angular-ui-router.min.js');
-<<<<<<< HEAD
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
                 $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
-=======
-                $app->view->enqueueScript('app', 'ng.fva', 'js/ng.fva.js');
-                $app->view->enqueueStyle('app', 'fva.css', 'css/fva.css');
->>>>>>> 8528ebf3b9b8cca50c1d0082b0142de9abdaa917
                 
                 $app->view->jsObject['angularAppDependencies'][] = 'ng.fva';
             }
