@@ -17,6 +17,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 }])
 
 .controller('indexCtrl', ['$scope', '$state', function($scope, $state){
+    $scope.message = 'Vai trem!';
     $scope.beginFva = function(){
         $state.go('termo-compromisso');
     }
