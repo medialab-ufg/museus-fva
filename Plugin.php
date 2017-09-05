@@ -13,38 +13,6 @@ class Plugin extends \MapasCulturais\Plugin {
         if (get_class($app->view) != 'MapasMuseus\Theme')
             return;
         
-        //Painel do Admin FVA
-        $app->hook('panel.menu:after', function() use ($app){
-            if(!$app->user->is('admin') && !$app->user->is('staff'))
-            return;
-            
-            $a_class = $this->template == 'panel/fva-admin' ? 'active' : '';
-            $url = $app->createUrl('panel', 'fva-admin');
-            echo "<li><a class='$a_class' href='$url'><span class='icon icon-em-cartaz'></span>FVA</a></li>";
-        });
-    
-        //Registra o js do painel admin
-        /* $app->hook('mapasculturais.head', function() use($app){
-            $app->view->enqueueScript('app', 'ng.fva-admin', '../src/admin/ng.fva-admin.js');
-            $app->view->jsObject['angularAppDependencies'][] = 'ng.fva-admin';
-
-            $spaceEntity = $app->repo('SpaceMeta');
-            $em = $app->getEm();
-            $query = $em->createQuery('SELECT COUNT(s.id) FROM MapasCulturais\Entities\Space s');
-            $count = $query->getSingleScalarResult();
-            //\dump($count);
-            //\dump($spaceEntity->findBy(array('key'=>'fva2017')));
-        }); */
-        
-        $app->hook('GET(panel.fva-admin)', function() use ($app) {
-            $this->requireAuthentication();
-            if(!$app->user->is('admin') && !$app->user->is('staff')){
-                $app->pass();
-            }
-
-            $this->render('fva-admin');
-        });
-        
         $plugin = $this;
         
         //Insere a aba FVA com o questionário no tema
@@ -72,14 +40,12 @@ class Plugin extends \MapasCulturais\Plugin {
                     $app->view->jsObject['respondido'] = $questionarioRespondido;
                 }
 
-                $app->view->enqueueScript('app', 'ng.fva-admin', '../src/admin/ng.fva-admin.js');
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
                 $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
                 
                 $app->view->jsObject['angularAppDependencies'][] = 'ng.fva';
-                $app->view->jsObject['angularAppDependencies'][] = 'ng.fva-admin';
             }
         });
 
