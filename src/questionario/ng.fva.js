@@ -4,7 +4,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 
 //Controller definido em fva-form que faz o roteamento entre um novo questionário ou exibir um questionário já respondido
 .controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', function($scope, $rootScope, $state, fvaQuestions){
-    
     if(MapasCulturais.hasOwnProperty('respondido')){
         $scope.$root.respostas = angular.fromJson(MapasCulturais.respondido);
         $scope.respostas = fvaQuestions;
@@ -17,7 +16,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 }])
 
 .controller('indexCtrl', ['$scope', '$state', function($scope, $state){
-    $scope.message = 'Vai trem!';
     $scope.beginFva = function(){
         $state.go('termo-compromisso');
     }
@@ -52,10 +50,11 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
             return isValid;
         }
         else {
-            isValid = questionValidatorService.multiplaEscolha($scope.dadosIntro.questionarioJaParticipou.edicoes);
+            /* isValid = questionValidatorService.multiplaEscolha($scope.dadosIntro.questionarioJaParticipou.edicoes);
             $scope.displayNotFirstTimeSurveyWarning = !isValid;
 
-            return isValid;
+            return isValid; */
+            return true;
         }
     }
 
@@ -102,7 +101,8 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 
 .controller('visitacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosVisitacao = fvaQuestions.visitacao;
-
+    console.log($scope.dadosVisitacao);
+    
     function validateVisitacao() {
         if ($scope.dadosVisitacao.realizaContagem.answer) {
             var isContagemValid = questionValidatorService.multiplaEscolha($scope.dadosVisitacao.tecnicaContagem, $scope.dadosVisitacao.tecnicaContagemOutros);
@@ -223,7 +223,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
     //valida se pelo menos uma opçao da multipla escolha foi selecionado
     this.multiplaEscolha = function (questionario, outros) {
         var isValid = false;
-
+        console.log(outros);
         Object.keys(questionario).forEach(function(k) {
             if(questionario[k].answer === true) {
                 isValid = true;
@@ -305,23 +305,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
                 answer: false,
                 text: ''
             },
-            questionarioJaParticipou: {
-                label: "Quais edições do FVA o Museu já participou?",
-                edicoes: {
-                    ed2014: {
-                        label: 'FVA 2014 - aplicação ocorrida em 2015 referente à visitação anual ao Museu em 2014',
-                        answer: false
-                    },
-                    ed2015: {
-                        label: 'FVA 2015 - aplicação ocorrida em 2016 referente à visitação anual ao Museu em 2015',
-                        answer: false
-                    },
-                    ed2016: {
-                        label: 'FVA 2016 - aplicação ocorrida em 2017 referente à visitação anual ao Museu em 2016',
-                        answer: false
-                    }
-                }
-            }
         },
         responsavel: {
             nome: {
@@ -402,30 +385,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
                 },
                 telefone: {
                     label: "Contato telefônico com o IBRAM",
-                    answer: false
-                },
-                revista: {
-                    label: "Revista",
-                    answer: false
-                },
-                jornal: {
-                    label: "Jornal",
-                    answer: false
-                },
-                radio: {
-                    label: "Rádio",
-                    answer: false
-                },
-                televisao: {
-                    label: "Televisão",
-                    answer: false
-                },
-                cartaz: {
-                    label: "Cartaz",
-                    answer: false
-                },
-                folder: {
-                    label: "Folder/Panfleto(flyer)",
                     answer: false
                 },
                 internet: {

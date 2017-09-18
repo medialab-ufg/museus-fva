@@ -42,3 +42,35 @@ li {
 #enviarBtn{
     float: right;
 }
+
+#tecnica-contagem{
+    margin-top: 20px;
+}
+
+/* Oculta os spinners nos campos number */
+
+/* Chrome e webkit browsers */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+/* Firefox */
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.section-header {
+    font-weight: bold;
+}
+
+.edit {
+    margin-left: 10px;
+}

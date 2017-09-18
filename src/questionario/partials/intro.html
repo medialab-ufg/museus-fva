@@ -15,17 +15,8 @@
             <li ng-repeat="question in dadosIntro.questionarioNaoParticipou.motivos"><input type="checkbox" ng-model="question.answer">{{question.label}}</li>
             <li>
                 <input type="checkbox" ng-model="dadosIntro.questionarioNaoParticipouOutros.answer">{{dadosIntro.questionarioNaoParticipouOutros.label}}
-                <input type="text" ng-model="dadosIntro.questionarioJaParticipouOutros.text">
+                <input type="text" ng-model="dadosIntro.questionarioNaoParticipouOutros.text">
             </li>
-        </ul>
-    </div>
-    <div ng-if="dadosIntro.primeiraParticipacaoFVA.answer === false">
-        <p class="pergunta-questionario">{{dadosIntro.questionarioJaParticipou.label}}</p>
-        <div ng-if="displayNotFirstTimeSurveyWarning" class="display-warning">
-            <p>*Pergunta obrigatória. Por favor, marque ao menos um item.</p>
-        </div>
-        <ul>
-            <li ng-repeat="question in dadosIntro.questionarioJaParticipou.edicoes"><input type="checkbox" ng-model="question.answer">{{question.label}}</li>
         </ul>
     </div>
     <div class="nav-panel">
