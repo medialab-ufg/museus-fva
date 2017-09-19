@@ -50,10 +50,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
             return isValid;
         }
         else {
-            /* isValid = questionValidatorService.multiplaEscolha($scope.dadosIntro.questionarioJaParticipou.edicoes);
-            $scope.displayNotFirstTimeSurveyWarning = !isValid;
-
-            return isValid; */
+            
             return true;
         }
     }
@@ -101,7 +98,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 
 .controller('visitacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosVisitacao = fvaQuestions.visitacao;
-    console.log($scope.dadosVisitacao);
     
     function validateVisitacao() {
         if ($scope.dadosVisitacao.realizaContagem.answer) {
@@ -223,7 +219,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
     //valida se pelo menos uma opçao da multipla escolha foi selecionado
     this.multiplaEscolha = function (questionario, outros) {
         var isValid = false;
-        console.log(outros);
+        
         Object.keys(questionario).forEach(function(k) {
             if(questionario[k].answer === true) {
                 isValid = true;

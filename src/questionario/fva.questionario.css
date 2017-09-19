@@ -74,3 +74,38 @@ input::-webkit-inner-spin-button {
 .edit {
     margin-left: 10px;
 }
+
+@media print {
+    body {
+        background-image: none;
+    }
+    @page {
+        size: A4 portrait;
+    }
+
+    .sidebar, .register-museum, #main-header, .servico, header, footer, #print-button {
+        display: none;
+    }
+
+    .tabs-content .aba-content {
+        display: none !important;
+    }
+
+    #dados-revisao {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: white;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    .pergunta-fva {
+        margin-top: 15px;
+    }
+}

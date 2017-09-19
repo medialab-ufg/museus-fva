@@ -1,10 +1,13 @@
 <div id="fva-revisao">
+    <div id="print-button" ng-if="!showReviewAlert">
+        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()">
+    </div>
     <div id="dados-revisao">
         <div ng-if="showReviewAlert">
             <p class="confirmacao" colspan="2">
                 Revise as informações abaixo com atenção e verifique se as informações procedem. Após o envio
                 não será possível mais editar. Aperte o botão "Enviar" para enviar as respostas
-                ou o botão "Voltar" para revisar as respostas informadas se necessário.
+                ou o botão "Anterior" para revisar as respostas informadas se necessário.
             </p>
         </div>
         <div ng-if="showReviewAlert" class="nav-panel">
@@ -44,16 +47,6 @@
                     <td class="pergunta-fva">Outros</td>
                     <td class="resposta-fva" ng-if="respostasFVA.introducao.questionarioNaoParticipouOutros.answer">{{respostasFVA.introducao.questionarioNaoParticipouOutros.text}}</td>
                 </tr>
-                <!-- Questionário pra quem não participou -->
-                <tr ng-if="respostasFVA.introducao.primeiraParticipacaoFVA.answer === false">
-                    <td class="pergunta-fva">
-                        {{respostasFVA.introducao.questionarioNaoParticipou.label}}
-                    </td>
-                </tr>
-                <tr ng-if="respostasFVA.introducao.primeiraParticipacaoFVA.answer === false" ng-repeat="item in respostasFVA.introducao.questionarioNaoParticipou.edicoes">
-                    <td class="pergunta-fva">{{item.label}}</td>
-                    <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
-                </tr>
                 <tr class="item-title">
                     <td colspan="2"><span class="section-header">DADOS DO RESPONSÁVEL PELO PREENCHIMENTO DO FORMULÁRIO</span><a class="edit" href="#" ui-sref="responsavel"></a></td>
                 </tr>
@@ -75,6 +68,10 @@
                     <td class="pergunta-fva">{{respostasFVA.visitacao.realizaContagem.label}}</td>
                     <td class="resposta-fva">{{respostasFVA.visitacao.realizaContagem.answer === true ? 'Sim' : 'Não'}}</td>
                 </tr>
+                <tr>
+                    <td colspan="2">Qual(is) a(s) técnica(s) de contagem de público utilizada(s)?</td>
+                <tr>
+                
                 <tr ng-if="respostasFVA.visitacao.realizaContagem.answer" ng-repeat="item in respostasFVA.visitacao.tecnicaContagem">
                     <td class="pergunta-fva">{{item.label}}</td>
                     <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
@@ -94,7 +91,10 @@
                 <tr class="item-title">
                     <td colspan="2"><span class="section-header">AVALIAÇÃO</span><a class="edit" href="#" ui-sref="avaliacao"></a></td>
                 </tr>
-                 <tr ng-repeat="item in respostasFVA.avaliacao.midias">
+                <tr>
+                    <td colspan="2">Indique o(s) meio(s) pelo(s) qual(is) soube do FVA</td>
+                <tr>
+                <tr ng-repeat="item in respostasFVA.avaliacao.midias">
                     <td class="pergunta-fva">{{item.label}}</td>
                     <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
                 </tr>
