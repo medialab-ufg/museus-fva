@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ng.fva", ['ui.router', 'ui.mask'])
+angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 //Controller definido em fva-form que faz o roteamento entre um novo questionário ou exibir um questionário já respondido
 .controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', function($scope, $rootScope, $state, fvaQuestions){
@@ -145,6 +145,9 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
 }])
 
 .controller('revisaoCtrl', ['$scope','$rootScope', 'fvaQuestions', 'saveFvaQuestions', function ($scope, $rootScope, fvaQuestions, saveFvaQuestions) {
+    $scope.showCienteCondicoesAlert = false;
+    $scope.showCienteCheckbox = true;
+
     if($scope.$root.respostas){
         $scope.respostasFVA = $scope.$root.respostas;
         $scope.showReviewAlert = false;
@@ -155,8 +158,17 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
     }
 
     $scope.enviarFVA = function(){
-        saveFvaQuestions.save();
-        $scope.showReviewAlert = false;
+        if($scope.respostasFVA.revisao.cienteCondicoes.answer) {
+            //desabilita checkbox de alerta sobre preenchimento do FVA depois que cliente respondeu questionário
+            $scope.respostasFVA.revisao.showCienteCheckbox = false;
+
+            saveFvaQuestions.save();
+            $scope.showReviewAlert = false;
+            $scope.showCienteCondicoesAlert = false;
+        }
+        else {
+            $scope.showCienteCondicoesAlert = true;
+        }
     }
 }])
 
@@ -299,21 +311,21 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
             questionarioNaoParticipouOutros: {
                 label: 'Outros',
                 answer: false,
-                text: ''
+                text: null
             },
         },
         responsavel: {
             nome: {
-                label: 'Nome do RESPONSÁVEL pelo preenchimento do FVA 2017',
-                answer: ''
+                label: 'Nome do RESPONSÁVEL pelo preenchimento do FVA',
+                answer: null
             },
             telefone: {
-                label: 'Telefone para contato com o RESPONSÁVEL pelo preenchimento do FVA 2017',
-                answer: ''
+                label: 'Telefone para contato com o RESPONSÁVEL pelo preenchimento do FVA',
+                answer: null
             },
             email: {
-                label: 'E-mail do RESPONSÁVEL pelo preenchimento do FVA 2017',
-                answer: ''
+                label: 'E-mail do RESPONSÁVEL pelo preenchimento do FVA',
+                answer: null
             }
         },
         visitacao: {
@@ -351,17 +363,21 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
                     answer: false
                 }
             },
+            justificativaBaixaVisitacao: {
+                label: 'Caso o total de visitação informado tenha sido "0" (zero) ou MUITO abaixo do que seria o padrão do Museu, especifique o(s) motivo(s) abaixo:',
+                answer: null
+            },
             tecnicaContagemOutros: {
                 label: 'Outros',
                 answer: false,
-                text: ''
+                text: null
             },
             quantitativo: {
                 label: 'Quantitativo total de visitações/visitas no ano referência (2016)',
                 answer: null
             },
             observacoes: {
-                label: 'Observações sobre a visitação no ano de referência (2016)',
+                label: 'Observações sobre a visitação no ano de referência (2016):',
                 answer: null
             }
         },
@@ -399,13 +415,20 @@ angular.module("ng.fva", ['ui.router', 'ui.mask'])
             midiasOutros: {
                 label: "Outros",
                 answer: false,
-                text: ''
+                text: null
             },
             opiniao: {
                 label: "Gostaríamos de saber sua opinião sobre o nosso questionário. Registre neste espaço as informações faltantes que você considera" +
                 "pertinentes e deixe também comentários/sugestões/críticas para aprimorarmos o Formulário de Visitação Anual em suas próximas edições",
-                text: ''
+                text: null
             }
+        },
+        revisao: {
+            cienteCondicoes: {
+                label: "Caso seja constatado algum erro de preenchimento após o envio, o FVA deverá ser preenchido novamente. Será considerado válido o último formulário enviado.",
+                answer: false
+            },
+            showCienteCheckbox: true
         }
     }
 });

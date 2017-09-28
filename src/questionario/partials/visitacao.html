@@ -1,18 +1,3 @@
-<script>
-    /* Função para não permitir a entrada de números negativos */
-    function allowOnlyPositiveIntegers(){
-        var numInput = document.getElementById('total-visitacao');
-        
-        numInput.addEventListener('input', function(){
-            var num = this.value.match(/^\d+$/);
-            if (num === null) {
-                this.value = "";
-            }
-        }, false)
-    }
-
-    setTimeout(allowOnlyPositiveIntegers, 5000);
-</script>
 <div id="fva-visitacao">
     <div id="dados-visitacao">
         <div id="contagem-visitacao">
@@ -24,7 +9,7 @@
                 <input name="fva-contagem" type="radio" ng-model="dadosVisitacao.realizaContagem.answer" ng-value="true">Sim
                 <input name="fva-contagem" type="radio" ng-model="dadosVisitacao.realizaContagem.answer" ng-value="false">Não
             </div>
-            <div id="tecnica-contagem" ng-if="dadosVisitacao.realizaContagem.answer">
+            <div id="tecnica-contagem" ng-hide="!dadosVisitacao.realizaContagem.answer">
                     <p class="pergunta-questionario">Qual(is) a(s) técnica(s) de contagem de público utilizada(s)?</p>
                 <div ng-if="displayTecnicaContagemWarning" class="display-warning">
                     <p>*É obrigatório selecionar ao menos uma opção antes de prosseguir. Ao escolher 'Outros:', é necessário fornecer uma descrição</p>
@@ -41,8 +26,12 @@
                     <div ng-if="displayTotalVisitasWarning" class="display-warning">
                         <p>*É obrigatório informar o total de visitações</p>
                     </div>
-                    <input id="total-visitacao" type="number" ng-model="dadosVisitacao.quantitativo.answer" ui-mask="numberFormat"><br/>
+                    <input id="total-visitacao" type="text" ng-model="dadosVisitacao.quantitativo.answer" ui-number-mask="0"><br/>
                     <p class="pergunta-questionario">*Ano Referência é o ano calendário anterior ao ano de preenchimento deste Formulário.</p>
+                </div>
+                <div id="-justificativa-baixa-visitacao">
+                    <p class="pergunta-questionario">{{dadosVisitacao.justificativaBaixaVisitacao.label}}</p>
+                    <textarea rows="10" cols="70" ng-model="dadosVisitacao.justificativaBaixaVisitacao.answer"></textarea><br />
                 </div>
             </div>
         </div>

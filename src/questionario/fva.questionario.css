@@ -75,6 +75,11 @@ input::-webkit-inner-spin-button {
     margin-left: 10px;
 }
 
+#ciente-revisao {
+    background: rgba(0, 0, 0, 0.12);
+    padding: 10px;
+}
+
 @media print {
     body {
         background-image: none;

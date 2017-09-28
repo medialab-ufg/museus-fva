@@ -22,6 +22,7 @@
     "webpack": "^3.5.5"
   },
   "dependencies": {
+    "angular-input-masks": "^4.0.0",
     "angular-ui-mask": "^1.8.7",
     "karma-chrome-launcher": "^2.2.0",
     "lodash": "^4.17.4"
