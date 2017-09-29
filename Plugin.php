@@ -42,7 +42,7 @@ class Plugin extends \MapasCulturais\Plugin {
 
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
-                //$app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
+                $app->view->enqueueScript('app', 'angular-input-masks', '../angular-input-masks-standalone.min.js');
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
                 $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
                 
