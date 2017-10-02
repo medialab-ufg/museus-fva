@@ -32,7 +32,7 @@ class Plugin extends \MapasCulturais\Plugin {
         
         $app->hook('mapasculturais.head', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
-
+           
             if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
 
@@ -42,7 +42,7 @@ class Plugin extends \MapasCulturais\Plugin {
 
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
-                $app->view->enqueueScript('app', 'angular-input-masks', '../angular-input-masks-standalone.min.js');
+                $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
                 $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
                 
@@ -61,16 +61,9 @@ class Plugin extends \MapasCulturais\Plugin {
                 return false;
             
             $fvaAnswersJson = file_get_contents('php://input');
-            
-            $spaceMeta = new Entities\SpaceMeta;
-            $fvaCorrente = $this->currentFva();
-            
-            $spaceMeta->key = 'fva2017';
-            $spaceMeta->value = $fvaAnswersJson;
-            $spaceMeta->owner = $spaceEntity;
 
-            $app->em->persist($spaceMeta);
-            $spaceMeta->save(true);
+            $spaceEntity->fva2017 = $fvaAnswersJson;
+            $spaceEntity->save(true);
         });
     }
 
@@ -106,6 +99,8 @@ class Plugin extends \MapasCulturais\Plugin {
     }
 
     public function register() {
-        
+        $this->registerSpaceMetadata('fva2017', array(
+            'label' => 'fva2017'
+        ));
     }
 }
