@@ -5,15 +5,12 @@
     <div id="dados-revisao">
         <div ng-if="showReviewAlert">
             <p class="confirmacao" colspan="2">
-                Revise as informações abaixo com atenção e verifique se as informações procedem. Caso seja necessário editar algum
-                dado fornecido, clique no ícone de lápis ao lado do título da seção que precisa de edição. Terminada a conferência dos dados e 
+                Revise as informações abaixo com atenção. Caso seja necessário editar algum
+                dado fornecido, clique no ícone de lápis <span class='edit'></span>  ao lado do título da seção que precisa de edição. Terminada a conferência dos dados e 
                 finalizado o preenchimento, aperte o botão "Enviar".
             </p>
         </div>
-        <div ng-if="showReviewAlert" class="nav-panel">
-            <input type="submit" ui-sref="avaliacao" value="<< Anterior">
-            <input id="enviarBtn" type="submit" value="Enviar >>" ng-click="enviarFVA()">
-        </div>
+       
         <table id="respostas-fva">
             <tbody>
                 <tr class="item-title">
@@ -120,6 +117,10 @@
             </div>
             <div id="ciente-revisao">
                 <input type="checkbox" ng-model="respostasFVA.revisao.cienteCondicoes.answer"><label>{{respostasFVA.revisao.cienteCondicoes.label}}</label>
+            </div>
+            <div ng-if="showReviewAlert" class="nav-panel">
+                <input type="submit" ui-sref="avaliacao" value="<< Anterior">
+                <input id="enviarBtn" type="submit" value="Enviar >>" ng-click="enviarFVA()">
             </div>
         </div>
     </div>

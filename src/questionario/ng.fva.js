@@ -404,11 +404,11 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                     answer: false
                 },
                 terceiros: {
-                    label: "Terceiros(colegas de trabalho, amigos, etc)",
+                    label: "Terceiros (colegas de trabalho, amigos, etc)",
                     answer: false
                 },
                 redes: {
-                    label: "Redes sociais(Instagram, Facebook, Twitter, Google+, Youtube, etc.)",
+                    label: "Redes sociais (Instagram, Facebook, Twitter, Google+, Youtube, etc.)",
                     answer: false
                 }
             },
@@ -419,7 +419,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
             },
             opiniao: {
                 label: "Gostaríamos de saber sua opinião sobre o nosso questionário. Registre neste espaço as informações faltantes que você considera" +
-                "pertinentes e deixe também comentários/sugestões/críticas para aprimorarmos o Formulário de Visitação Anual em suas próximas edições",
+                " pertinentes e deixe também comentários/sugestões/críticas para aprimorarmos o Formulário de Visitação Anual em suas próximas edições",
                 text: null
             }
         },
