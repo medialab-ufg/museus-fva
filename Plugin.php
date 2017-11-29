@@ -3,7 +3,13 @@ namespace Fva;
 
 use MapasCulturais\app;
 use MapasCulturais\Entities;
-
+/**
+ *      Este plugin é responsável por gerar o formulário para preenchimento do FVA (Formulário de Visitação Anual).
+ * A cada ano, o IBRAM aplica um novo questionário que deve ser preenchido pelos museus a fim de, principalmente, ter um controle
+ * estatístico de visitações.
+ *      O método getCurrentFva() mantém a informação de qual o ano corrente em que está sendo aplicado o
+ * questionário no formato 'fva+ano de aplicação' e salva no banco como um metadado do tipo space-type. (Exemplo: 'fva2017->[json com as respostas]).
+ */
 class Plugin extends \MapasCulturais\Plugin {
 
     public function _init() {
@@ -32,7 +38,11 @@ class Plugin extends \MapasCulturais\Plugin {
         
         $app->hook('mapasculturais.head', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
-           
+
+            /**
+            * Checa se o questionário corrente já foi respondido. Caso sim, ele é adicionado na chave 'respondido' e depois é acessado
+            * no javascript via objeto global MapasCulturais (MapasCulturais.respondido) 
+            */
             if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
 
@@ -53,7 +63,7 @@ class Plugin extends \MapasCulturais\Plugin {
         /**
          * Salva o JSON com as respostas
          */
-        $app->hook('POST(space.fvaSave)', function () use($app){
+        $app->hook('POST(space.fvaSave)', function () use($app, $plugin){
             $this->requireAuthentication();
             $spaceEntity = $app->view->controller->requestedEntity;
             
@@ -61,8 +71,8 @@ class Plugin extends \MapasCulturais\Plugin {
                 return false;
             
             $fvaAnswersJson = file_get_contents('php://input');
-
-            $spaceEntity->fva2017 = $fvaAnswersJson;
+            $currentFva = $plugin->getCurrentFva();
+            $spaceEntity->{$currentFva} = $fvaAnswersJson;
             $spaceEntity->save(true);
         });
     }
@@ -76,7 +86,7 @@ class Plugin extends \MapasCulturais\Plugin {
      */
     private function checkCurrentFva($spaceEntity){
         $ano = \date('Y');
-        $fvaCorrente = $this->currentFva();
+        $fvaCorrente = $this->getCurrentFva();
         
         if(array_key_exists($fvaCorrente, $spaceEntity->metadata)){
             return $spaceEntity->metadata[$fvaCorrente];
@@ -91,16 +101,19 @@ class Plugin extends \MapasCulturais\Plugin {
      *
      * @return string
      */
-    private function currentFva(){
+    private function getCurrentFva(){
         $ano = \date('Y');
         $currentFva = "fva$ano";
         
         return $currentFva;
     }
 
+    
     public function register() {
-        $this->registerSpaceMetadata('fva2017', array(
-            'label' => 'fva2017'
+        $registerCurrentFva = $this->getCurrentFva();
+
+        $this->registerSpaceMetadata($registerCurrentFva, array(
+            'label' => $registerCurrentFva
         ));
     }
 }
