@@ -2,6 +2,9 @@
     <p>Para efeito deste Formulário, deverá ser considerada VISITAÇÃO / VISITA todo usuário das atividades/áreas/ações desenvolvidas pelo Museu 
     ou em seu complexo que tenham relação com a equipe, o acervo, os trabalhos, os projetos e as iniciativas do Museu.</p>
     <p class="pergunta-questionario">{{dadosIntro.primeiraParticipacaoFVA.label}}</p>
+    <div ng-if="displayNoSelectionWarning" class="display-warning">
+        <p>*É obrigatório selecionar uma opção antes de prosseguir.</p>
+    </div>
     <div id="intro-option">
         <input name="survey-participation" type="radio" ng-model="dadosIntro.primeiraParticipacaoFVA.answer" ng-value="true">Sim
         <input name="survey-participation" type="radio" ng-model="dadosIntro.primeiraParticipacaoFVA.answer" ng-value="false">Não

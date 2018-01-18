@@ -38,25 +38,35 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 .controller('introCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosIntro = fvaQuestions.introducao;
     
-    //Checa se não foi deixado resposta em branco e exibe a respectiva mensagem de alerta
+    //Checa se não foi deixado resposta em branco e exibe a respectiva mensagem de alerta caso a resposta seja 'sim'
     function validateIntro() {
         var isValid = false;
 
-        //faz a validação de acordo com as informações que estão sendo exibidas na tela
         if ($scope.dadosIntro.primeiraParticipacaoFVA.answer) {
             isValid = questionValidatorService.multiplaEscolha($scope.dadosIntro.questionarioNaoParticipou.motivos, $scope.dadosIntro.questionarioNaoParticipouOutros);
             $scope.displayFirstTimeSurveyWarning = !isValid;
 
             return isValid;
         }
+        //Caso tenha sido escolhido 'Não', nenhuma validação é necessária
         else {
-            
             return true;
         }
     }
 
+    function validateNoSelection() {
+        if($scope.dadosIntro.primeiraParticipacaoFVA.answer === null) {
+            $scope.displayNoSelectionWarning = true;
+            return false;
+        }
+        else {
+            $scope.displayNoSelectionWarning = false;
+            return true
+        }
+    }
+
     $scope.nextPage = function() {
-        if(validateIntro()){
+        if(validateIntro() && validateNoSelection()){
             $state.go('responsavel');
         }
     };
@@ -67,8 +77,8 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
     var isNameValid, isTelValid, isEmailValid;
 
     function validateResponsavel() {
-        isNameValid = $scope.dadosResponsavel.nome.answer === '' ? false : true;
-        isTelValid = $scope.dadosResponsavel.telefone.answer === '' ? false : true;
+        isNameValid = $scope.dadosResponsavel.nome.answer === null ? false : true;
+        isTelValid = $scope.dadosResponsavel.telefone.answer === null ? false : true;
 
         $scope.displayNameWarning = !isNameValid;
         $scope.displayTelWarning = !isTelValid;
