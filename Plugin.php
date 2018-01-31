@@ -45,7 +45,7 @@ class Plugin extends \MapasCulturais\Plugin {
             */
             if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
-
+                
                 if(!empty($questionarioRespondido)){
                     $app->view->jsObject['respondido'] = $questionarioRespondido;
                 }
