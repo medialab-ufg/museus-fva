@@ -383,11 +383,11 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                 text: null
             },
             quantitativo: {
-                label: 'Quantitativo total de visitações/visitas no ano referência (2016)',
+                label: 'Quantitativo total de visitações/visitas no ano referência (2017)',
                 answer: null
             },
             observacoes: {
-                label: 'Observações sobre a visitação no ano de referência (2016):',
+                label: 'Observações sobre a visitação no ano de referência (2017):',
                 answer: null
             }
         },
