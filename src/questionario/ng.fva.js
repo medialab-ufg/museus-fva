@@ -3,14 +3,24 @@
 angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 //Controller definido em fva-form que faz o roteamento entre um novo questionário ou exibir um questionário já respondido
-.controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', function($scope, $rootScope, $state, fvaQuestions){
+.controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', '$http', function($scope, $rootScope, $state, fvaQuestions,$http){
     if(MapasCulturais.hasOwnProperty('respondido')){
         $scope.$root.respostas = angular.fromJson(MapasCulturais.respondido);
         $scope.respostas = fvaQuestions;
-        
+
         $state.go('revisao');
     }
     else{
+        /*$http.post(MapasCulturais.createUrl('panel', 'fvaOpenYear'))
+            .then(
+                function successCallback(response){
+                    //$scope.myWelcome = response.data;
+                    MapasCulturais.Messages.success(response.data);
+                },
+                function errorCallback(){
+                    MapasCulturais.Messages.error('erro no ano');
+                }
+            );*/
         $state.go('index');
     }
 }])
@@ -24,7 +34,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 .controller('termoCompromissoCtrl', ['$scope', '$state', 'fvaQuestions', function ($scope, $state, fvaQuestions) {
     $scope.condicao = fvaQuestions.termosCompromisso;
     $scope.displayAlertaTermoCompromisso = false;
-    
+
     $scope.validateTermos = function () {
         if ($scope.condicao.ciente) {
             $state.go('intro');
@@ -37,7 +47,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('introCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosIntro = fvaQuestions.introducao;
-    
+
     //Checa se não foi deixado resposta em branco e exibe a respectiva mensagem de alerta caso a resposta seja 'sim'
     function validateIntro() {
         var isValid = false;
@@ -98,7 +108,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
             return false;
         }
     };
-    
+
     $scope.nextPage = function() {
         if(validateResponsavel()){
             $state.go('visitacao');
@@ -108,14 +118,14 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('visitacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosVisitacao = fvaQuestions.visitacao;
-    
+
     function validateVisitacao() {
         if ($scope.dadosVisitacao.realizaContagem.answer) {
             var isContagemValid = questionValidatorService.multiplaEscolha($scope.dadosVisitacao.tecnicaContagem, $scope.dadosVisitacao.tecnicaContagemOutros);
             $scope.displayTecnicaContagemWarning = !isContagemValid;
             var isTotalVisitasValid = $scope.dadosVisitacao.quantitativo.answer === null ? false : true;
             $scope.displayTotalVisitasWarning = !isTotalVisitasValid;
-            
+
             if (isContagemValid && isTotalVisitasValid) {
                 return true;
             }
@@ -139,14 +149,14 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('avaliacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', 'saveFvaQuestions', function ($scope, $state, fvaQuestions, questionValidatorService, saveFvaQuestions) {
     $scope.dadosAvaliacao = fvaQuestions.avaliacao;
-    
+
     function validateAvaliacao() {
         var isValid = questionValidatorService.multiplaEscolha($scope.dadosAvaliacao.midias, $scope.dadosAvaliacao.midiasOutros);
         $scope.displayMidiaWarning = !isValid;
-        
+
         return isValid;
     }
-    
+
     $scope.nextPage = function(){
         if(validateAvaliacao()){
             $state.go('revisao');
@@ -241,7 +251,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
     //valida se pelo menos uma opçao da multipla escolha foi selecionado
     this.multiplaEscolha = function (questionario, outros) {
         var isValid = false;
-        
+
         Object.keys(questionario).forEach(function(k) {
             if(questionario[k].answer === true) {
                 isValid = true;
@@ -383,11 +393,11 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                 text: null
             },
             quantitativo: {
-                label: 'Quantitativo total de visitações/visitas no ano referência (2017)',
+                label: 'Quantitativo total de visitações/visitas no ano referência (' + $('#fva-form').data('fvaopenyear') + ')',
                 answer: null
             },
             observacoes: {
-                label: 'Observações sobre a visitação no ano de referência (2017):',
+                label: 'Observações sobre a visitação no ano de referência (' + $('#fva-form').data('fvaopenyear') + '):',
                 answer: null
             }
         },

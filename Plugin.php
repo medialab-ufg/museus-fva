@@ -22,9 +22,21 @@ class Plugin extends \MapasCulturais\Plugin {
         $plugin = $this;
 
         $app->hook('GET(panel.anos)', function() use($app, $plugin){
-            $fvaEntity = $app->repo('SubsiteMeta')->find('yearsAvailable');
+            $yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'));
+            $yearsAvailable = json_decode($yearsAvailable[0]->value);
 
-            echo json_encode($fvaEntity);die;
+            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
+            $fvaOpen = json_decode($fvaOpen[0]->value);
+
+            var_dump($plugin->getCurrentFva());
+        });
+
+        $app->hook('POST(panel.fvaOpenYear)', function() use($app, $plugin){
+            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
+            $fvaOpen = json_decode($fvaOpen[0]->value);
+
+            echo $plugin->getCurrentFvaYear();
+            die;
         });
 
         //Insere a aba FVA com o questionário no tema
@@ -35,11 +47,11 @@ class Plugin extends \MapasCulturais\Plugin {
                 $this->part('fva-tab');
         });
 
-        $app->hook('template(space.single.tabs-content):end', function() use($app){
+        $app->hook('template(space.single.tabs-content):end', function() use($app,$plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
 
             if ($spaceEntity->canUser('@control'))
-                $this->part('fva-form');
+                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);
         });
 
         //Painel do Admin FVA
@@ -227,12 +239,17 @@ class Plugin extends \MapasCulturais\Plugin {
      * @return string
      */
     private function getCurrentFva(){
-        $ano = \date('Y');
-        $currentFva = "fva$ano";
+        $app = App::i();
+
+        $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
+        $currentFva = json_decode($fvaOpen[0]->value);
 
         return $currentFva;
     }
 
+    private function getCurrentFvaYear(){
+        return substr($this->getCurrentFva(),3);
+    }
 
     public function register() {
         $registerCurrentFva = $this->getCurrentFva();
