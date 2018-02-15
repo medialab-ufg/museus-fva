@@ -14,28 +14,34 @@ class Plugin extends \MapasCulturais\Plugin {
 
     public function _init() {
         $app = App::i();
-        
+
         // Fazer funcionar apenas no tema de museus:
         if (get_class($app->view) != 'MapasMuseus\Theme')
             return;
-        
+
         $plugin = $this;
-        
+
+        $app->hook('GET(panel.anos)', function() use($app, $plugin){
+            $fvaEntity = $app->repo('SubsiteMeta')->find('yearsAvailable');
+
+            echo json_encode($fvaEntity);die;
+        });
+
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app){
             $spaceEntity = $app->view->controller->requestedEntity;
-            
+
             if ($spaceEntity->canUser('@control'))
                 $this->part('fva-tab');
         });
 
         $app->hook('template(space.single.tabs-content):end', function() use($app){
             $spaceEntity = $app->view->controller->requestedEntity;
-            
+
             if ($spaceEntity->canUser('@control'))
                 $this->part('fva-form');
         });
-        
+
         //Painel do Admin FVA
         $app->hook('panel.menu:after', function() use ($app){
             if(!$app->user->is('admin') && !$app->user->is('staff'))
@@ -44,30 +50,30 @@ class Plugin extends \MapasCulturais\Plugin {
             $url = $app->createUrl('panel', 'fva-admin');
             echo "<li><a href='$url'><span class='icon icon-em-cartaz'></span>FVA</a></li>";
         });
-        
+
         //Hook que carrega o HTML gerado pelo build do ReactJS para o Admin
         $app->hook('GET(panel.fva-admin)', function() use ($app) {
             $this->requireAuthentication();
-            
+
             if(!$app->user->is('admin') && !$app->user->is('staff')){
                 $app->pass();
             }
-            
+
             $this->render('fva-admin');
         });
-        
-        
-        
+
+
+
         $app->hook('mapasculturais.head', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
 
             /**
             * Checa se o questionário corrente já foi respondido. Caso sim, ele é adicionado na chave 'respondido' e depois é acessado
-            * no javascript via objeto global MapasCulturais (MapasCulturais.respondido) 
+            * no javascript via objeto global MapasCulturais (MapasCulturais.respondido)
             */
             if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
-                
+
                 if(!empty($questionarioRespondido)){
                     $app->view->jsObject['respondido'] = $questionarioRespondido;
                 }
@@ -77,26 +83,26 @@ class Plugin extends \MapasCulturais\Plugin {
                 $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
                 $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
-                
+
                 $app->view->jsObject['angularAppDependencies'][] = 'ng.fva';
             }
-            
+
             // Carrega JS do painel de Admin
             $controllerAtual = $app->view->getController();
             if(property_exists($controllerAtual, 'action') && $controllerAtual->action === 'fva-admin') {
                 $app->view->enqueueScript('app', 'bundle', '/bundle.js');
             }
-            
-            
+
+
         });
 
-        
-        
-        
+
+
+
         //Geração da planilha de museus que responderam FVA
-        $app->hook('POST(panel.generate-xls)', function() use($app, $self) {
+        $app->hook('POST(panel.generate-xls)', function() use($app, $plugin) {
             $objPHPExcel = new \PHPExcel();
-            
+
             // JSON dos museus a serem inclusos no relatório
             $museusRelatorio = json_decode(file_get_contents('php://input'));
 
@@ -108,7 +114,7 @@ class Plugin extends \MapasCulturais\Plugin {
             ->setDescription("Relatório de Respostas do FVA Corrente")
             ->setKeywords("Relatório FVA")
             ->setCategory("Relatório");
-        
+
             // Legenda das Colunas da Planilha
             $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', 'Museu')
@@ -128,63 +134,63 @@ class Plugin extends \MapasCulturais\Plugin {
             ->setCellValue('O1', 'Meios Pelos Quais Soube do FVA')
             ->setCellValue('P1', 'Outras Mídias FVA')
             ->setCellValue('Q1', 'Opinião Sobre o Questionário FVA');
-                        
+
             // Preenche a planilha com os dados
             $self->writeSheetLines($museusRelatorio, $objPHPExcel, $self);
-    
+
             // Nomeia a Planilha
             $objPHPExcel->getActiveSheet()->setTitle('Relatório FVA 2018');
-  
+
             // Seta a primeira planilha como a ativa
             $objPHPExcel->setActiveSheetIndex(0);
-    
+
             // Headers a serem enviados na resposta (Excel2007)
             header('Content-Type: application/vnd.ms-excel');
             header('Content-Disposition: attachment;filename="01simple.xls"');
             header('Cache-Control: max-age=0');
             // Necessário para o IE9
             header('Cache-Control: max-age=1');
-    
+
             header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Não expira
             header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // sempre modificado
             header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
             header ('Pragma: public'); // HTTP/1.0
-    
+
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            
+
             //Salva a planilha no buffer de saída
             ob_start();
             $objWriter->save("php://output");
             $xlsData = ob_get_contents();
             ob_end_clean();
-            
+
             $response =  array(
                 'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
             );
-            
+
             echo json_encode($response);
         });
-        
-        
-        
-        
-        
+
+
+
+
+
         /**
          * Salva o JSON com as respostas
          */
         $app->hook('POST(space.fvaSave)', function () use($app, $plugin){
             $this->requireAuthentication();
             $spaceEntity = $app->view->controller->requestedEntity;
-            
+
             if (!$spaceEntity->canUser('@control'))
                 return false;
-            
+
             $fvaAnswersJson = file_get_contents('php://input');
             $currentFva = $plugin->getCurrentFva();
             $spaceEntity->{$currentFva} = $fvaAnswersJson;
             $spaceEntity->save(true);
         });
-        
+
         //Apaga o FVA do museu do id fornecido
         $app->hook('POST(panel.resetFVA)', function() use($app){
             $this->requireAuthentication();
@@ -206,7 +212,7 @@ class Plugin extends \MapasCulturais\Plugin {
     private function checkCurrentFva($spaceEntity){
         $ano = \date('Y');
         $fvaCorrente = $this->getCurrentFva();
-        
+
         if(array_key_exists($fvaCorrente, $spaceEntity->metadata)){
             return $spaceEntity->metadata[$fvaCorrente];
         }
@@ -214,7 +220,7 @@ class Plugin extends \MapasCulturais\Plugin {
             return false;
         }
     }
-    
+
     /**
      * Get do Fva do ano corrente
      *
@@ -223,19 +229,20 @@ class Plugin extends \MapasCulturais\Plugin {
     private function getCurrentFva(){
         $ano = \date('Y');
         $currentFva = "fva$ano";
-        
+
         return $currentFva;
     }
 
-    
+
     public function register() {
         $registerCurrentFva = $this->getCurrentFva();
 
         $this->registerSpaceMetadata($registerCurrentFva, array(
             'label' => $registerCurrentFva
         ));
+
     }
-    
+
     /**
      * Escreve cada linha da exportação dos dados do FVA em planilha em suas respectivas colunas
      *
@@ -249,7 +256,7 @@ class Plugin extends \MapasCulturais\Plugin {
 
         foreach($museus as $m) {
             $fva = json_decode($m->fva2018);
-            
+
             $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('A' . (string)$line, $m->name)
                         ->setCellValue('B' . (string)$line, $m->mus_cod)
@@ -268,8 +275,8 @@ class Plugin extends \MapasCulturais\Plugin {
                         ->setCellValue('O' . (string)$line, $self->assertBlockAnswers($fva->avaliacao->midias))
                         ->setCellValue('P' . (string)$line, $fva->avaliacao->midiasOutros->answer !== false ? $fva->avaliacao->midiasOutros->text : '')
                         ->setCellValue('Q' . (string)$line, $fva->avaliacao->opiniao->text !== null ? $fva->avaliacao->opiniao->text : '');
-                        
-        
+
+
             $line++;
         }
     }
@@ -292,7 +299,7 @@ class Plugin extends \MapasCulturais\Plugin {
         $return = implode(", ", $answers);
         return $return;
     }
-    
-    
-    
+
+
+
 }
