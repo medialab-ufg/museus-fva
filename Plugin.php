@@ -25,10 +25,8 @@ class Plugin extends \MapasCulturais\Plugin {
             $yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'));
             $yearsAvailable = json_decode($yearsAvailable[0]->value);
 
-            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
-            $fvaOpen = json_decode($fvaOpen[0]->value);
-
-            var_dump($plugin->getCurrentFva());
+            echo json_encode($yearsAvailable);
+            die;
         });
 
         $app->hook('POST(panel.fvaOpenYear)', function() use($app, $plugin){
@@ -36,6 +34,31 @@ class Plugin extends \MapasCulturais\Plugin {
             $fvaOpen = json_decode($fvaOpen[0]->value);
 
             echo $plugin->getCurrentFvaYear();
+            die;
+        });
+
+        $app->hook('GET(panel.fvaOpenYear)', function() use($app, $plugin){
+            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
+            $fvaOpen = json_decode($fvaOpen[0]->value);
+
+            echo $plugin->getCurrentFvaYear();
+            die;
+        });
+
+        $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
+            $yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'));
+            $yearsAvailable = json_decode($yearsAvailable[0]->value);
+
+            $years = Array();
+            foreach ($yearsAvailable as $key => $fva) {
+                $years[] = array(
+                    'id'    => $key,
+                    'name'  => $fva,
+                    'size'  => 'Large'
+                );
+            }
+
+            echo json_encode($years);
             die;
         });
 
