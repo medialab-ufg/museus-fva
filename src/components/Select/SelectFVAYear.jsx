@@ -22,34 +22,27 @@ export default class SelectFVAYear extends React.Component {
         super(props);
 
         this.state = {
-            value: 1,
-            years: this.yearsAvailable()
+            years: []
         };
     }
 
-    yearsAvailable() {
+    componentDidMount() {
         $.ajax({
             url: MapasCulturais.createUrl('panel', 'fvaYearsAvailable'),
             type: 'GET',
             dataType:'json',
         }).done(function(data) {
-            console.log(data);
             this.setState({years: data});
         }.bind(this));
     }
 
 
     render() {
-
-        let itens = null;
-
         const menu = (
             <Menu onClick={handleMenuClick}>
-                {() => {
-                    this.state.years.map(l =>
-                        <Menu.Item key="3">{l.name}</Menu.Item>
-                    );
-                }
+                {this.state.years.length > 0 ?
+                    (this.state.years.map((year, index) => <Menu.Item key={index}>{year}</Menu.Item>))
+                    : null
                 }
             </Menu>
         );

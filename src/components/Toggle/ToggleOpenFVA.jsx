@@ -34,7 +34,6 @@ export default class ToggleOpenFVA extends React.Component {
             type: 'GET',
             dataType:'json',
         }).done(function(data) {
-            console.log(data);
             this.setState({fvaYear: data});
         }.bind(this));
     }
@@ -57,19 +56,7 @@ export default class ToggleOpenFVA extends React.Component {
         });
     }
 
-    /*<ToggleButton
-        value={ this.state.toggled }
-        onToggle={(toggled) => {
-
-            this.setState({
-                toggled: !toggled,
-            });
-
-            this.saveFVAStatus(!toggled);
-        }} />*/
-
     render() {
-        //let handlerExample = function(option) {
 
         let button = null;
 

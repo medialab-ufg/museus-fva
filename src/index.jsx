@@ -46,8 +46,6 @@ class Index extends React.Component {
                         this._qtdRespostas = qtdRespostas;
                         this._percentualRespostas = percentualRespostas;
                         this.setState({museusData: data});
-
-                        console.log(data);
                     });
             });
 
