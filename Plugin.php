@@ -51,13 +51,9 @@ class Plugin extends \MapasCulturais\Plugin {
 
             $years = Array();
             foreach ($yearsAvailable as $key => $fva) {
-                $years[] = $fva;
-                continue;
-                
                 $years[] = array(
-                    'id'    => $key,
-                    'name'  => $fva,
-                    'size'  => 'Large'
+                    'fva'   => $fva,
+                    'year'  => substr($fva,3)
                 );
             }
 
