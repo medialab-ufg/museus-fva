@@ -62,10 +62,10 @@ class Plugin extends \MapasCulturais\Plugin {
         });
 
         //Insere a aba FVA com o questionário no tema
-        $app->hook('template(space.single.tabs):end', function() use($app){
+        $app->hook('template(space.single.tabs):end', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
 
-            if ($spaceEntity->canUser('@control'))
+            if ($spaceEntity->canUser('@control') && empty($this->getCurrentFva()))
                 $this->part('fva-tab');
         });
 
@@ -264,7 +264,7 @@ class Plugin extends \MapasCulturais\Plugin {
         $app = App::i();
 
         $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
-        $currentFva = json_decode($fvaOpen[0]->value);
+        $currentFva = (empty($fvaOpen)) ? json_encode(array()) : json_decode($fvaOpen[0]->value);
 
         return $currentFva;
     }
