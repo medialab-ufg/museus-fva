@@ -296,6 +296,7 @@ class Plugin extends \MapasCulturais\Plugin {
 
         $this->registerSpaceMetadata($registerCurrentFva, array(
             'label'   => $registerCurrentFva,
+            'private' => true
         ));
 
         $this->registerMetadata('MapasCulturais\Entities\Subsite', 'fvaOpen', array(
