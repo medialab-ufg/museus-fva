@@ -41,7 +41,7 @@ export default class SelectFVAYear extends React.Component {
         const menu = (
             <Menu onClick={handleMenuClick}>
                 {this.state.years.length > 0 ?
-                    (this.state.years.map((year, index) => <Menu.Item key={index}>{year}</Menu.Item>))
+                    (this.state.years.map((year, index) => <Menu.Item key={year.year}>{year.year}</Menu.Item>))
                     : null
                 }
             </Menu>

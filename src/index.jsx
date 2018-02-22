@@ -21,7 +21,6 @@ class Index extends React.Component {
         this.fetchMuseus          = this.fetchMuseus.bind(this);
         this.updateState          = this.updateState.bind(this);
         this.filterMuseums        = this.filterMuseums.bind(this);
-        this.getFvaYearsAvailable = this.getFvaYearsAvailable.bind(this);
     }
 
     componentWillMount() {
@@ -99,21 +98,9 @@ class Index extends React.Component {
         }
     }
 
-    //retorna os anos disponíveis para consulta
-    getFvaYearsAvailable() {
-        $.ajax({
-            url: MapasCulturais.createUrl('panel', 'fvaYearsAvailable'),
-            type: 'POST',
-            dataType:'json',
-        }).done(function(data) {
-            //console.log(data);
-        });
-    }
-
     //update o estado da aplicação
     updateState() {
         this.fetchMuseus();
-        this.getFvaYearsAvailable();
     }
 
     //filtra os museus que responderam o FVA para gerar o relatório em planilha

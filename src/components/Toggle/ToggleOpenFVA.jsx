@@ -1,7 +1,12 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
 import React from'react';
-import{ Modal, Button, Input } from'antd';
+import{ Modal, Button, Input, Menu, Dropdown, Icon, message } from'antd';
 
+
+function handleButtonClick(e) {
+    message.info('Click on left button.');
+    console.log('click left button', e);
+}
 
 
 export default class ToggleOpenFVA extends React.Component {
@@ -11,7 +16,10 @@ export default class ToggleOpenFVA extends React.Component {
         this.state = {
             loading: false,
             visible: false,
-            fvaYear: this.getFvaYearOpen()
+            fvaOpenYear: this.getFvaYearOpen(),
+            newFvaYear: '',
+            years: [],
+            input: true
         };
     }
 
@@ -21,8 +29,32 @@ export default class ToggleOpenFVA extends React.Component {
         });
     }
 
+    handleMenuClick(e) {
+        if(e.key === 'newYear') {
+            this.setState({
+                newFvaYear: '',
+                input: false
+            });
+
+            $('input[name=newFvaYear]').focus().val('');
+        }
+        else{
+            this.setState({
+                newFvaYear: e.key,
+                input: true
+            });
+
+            $('input[name=newFvaYear]').val(e.key);
+        }
+
+        console.log('click', e);
+    }
+
+
     handleOk() {
         this.setState({ loading: true });
+
+        this.saveFVAStatus().bind(this);
     }
     handleCancel() {
         this.setState({ visible: false });
@@ -34,34 +66,66 @@ export default class ToggleOpenFVA extends React.Component {
             type: 'GET',
             dataType:'json',
         }).done(function(data) {
-            this.setState({fvaYear: data});
+            this.setState({fvaOpenYear: data});
         }.bind(this));
+    }
+
+    componentDidMount() {
+        $.ajax({
+            url: MapasCulturais.createUrl('panel', 'fvaYearsAvailable'),
+            type: 'GET',
+            dataType:'json',
+        }).done(function(data) {
+            this.setState({years: data});
+        }.bind(this));
+    }
+
+    //Testa se o valor digitado é um ano (YYYY)
+    testYear() {
+        if(/^([0-9]{4})$/.test($('input[name=newFvaYear]').val())) {
+            this.setState({newFvaYear: $('input[name=newFvaYear]').val()});
+        }
     }
 
     closeFVA() {
         this.setState({
-            fvaYear: false,
+            newFvaYear: false,
         });
     }
 
 
-    saveFVAStatus(status) {
-        const self = this;
+    saveFVAStatus() {
+        this.setState({ loading: true });
 
         $.ajax({
-            url: MapasCulturais.createUrl('panel', 'openFVA'),
+            url: MapasCulturais.createUrl('panel', 'fvaOpenYear'),
             type: 'POST',
-            data: JSON.stringify(status),
+            data: JSON.stringify(this.state.newFvaYear),
             dataType:'json',
-        });
+        }).done(function(data) {
+            console.log(data);
+            this.setState({loading: false});
+        }.bind(this));
     }
 
     render() {
 
+        const menu = (
+            <Menu onClick={this.handleMenuClick.bind(this)} defaultOpenKeys={['newYear']}>
+                {this.state.years.length > 0 ?
+                    (this.state.years.map((year, index) => <Menu.Item key={year.year
+                    }>{year.year}</Menu.Item>))
+                    : null
+                }
+                <Menu.Item key="newYear">Adicionar Novo Ano</Menu.Item>
+            </Menu>
+        );
+
+
         let button = null;
 
         if(this.state.fvaYear) {
-            button = <Button type="danger" onClick={this.closeFVA.bind(this)}>Fechar Questionário {this.state.fvaYear}</Button>;
+            button = <Button type="danger" onClick={this.closeFVA.bind(this)}>Fechar Questionário {this.state.fvaOpenYear}</Button>;
         }
         else{
             button = <Button type="primary" onClick={this.showModal.bind(this)}>Abrir Questionário</Button>;
@@ -74,15 +138,24 @@ export default class ToggleOpenFVA extends React.Component {
                 <Modal
                     visible={visible}
                     title="Abrir FVA"
-                    onOk={this.handleOk.bind(this)}
+                    onOk={this.saveFVAStatus.bind(this)}
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
                         <Button key="back" onClick={this.handleCancel.bind(this)}>Cancelar</Button>,
-                        <Button key="submit" type="primary" loading={loading} onClick={this.handleOk.bind(this)}>Abrir FVA</Button>,
+                        <Button key="submit" type="primary" loading={loading} onClick={this.saveFVAStatus.bind(this)} disabled={this.state.newFvaYear === '' ? true : false}>Abrir FVA</Button>,
                     ]}
                 >
-                    <p>Digite o ano para abertura do questionário</p>
-                    <Input name="fvaYear" />
+
+                    <div>
+                        <Dropdown.Button onClick={handleButtonClick} overlay={menu} style={{float: 'right'}}>
+                              Selecione o Ano
+                        </Dropdown.Button>
+                    </div>
+
+                    <p>Escolha o ano para abertura do questionário</p>
+                    <Input name="newFvaYear" pattern="[0-9]{4}" onKeyUp={this.testYear.bind(this)} placeholder={this.state.newFvaYear === '' ? 'Digite aqui o ano' : ''} />
+
+
                 </Modal>
             </div>
         );

@@ -29,12 +29,30 @@ class Plugin extends \MapasCulturais\Plugin {
             die;
         });
 
+        //Grava a flag que FVA está disponível para ser respondido
         $app->hook('POST(panel.fvaOpenYear)', function() use($app, $plugin){
-            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
-            $fvaOpen = json_decode($fvaOpen[0]->value);
+            $fvaCurrentStatus = json_decode(file_get_contents('php://input'));
 
-            echo $plugin->getCurrentFvaYear();
-            die;
+            echo $fvaCurrentStatus;
+
+            $fvaEntity = $app->repo('SubsiteMeta');
+            $fvaEntity->fvaOpen = 'fva' . $fvaCurrentStatus;
+
+            $fvaAtual = $plugin->getCurrentFva();
+            //echo json_encode($fvaEntity);die;
+            $fvaEntity->save(true);
+        });
+
+        $app->hook('GET(panel.teste)', function() use($app, $plugin){
+
+            #echo $_GET['ano'];
+
+            $fvaEntity = $app->repo('SubsiteMeta')->find(1);
+            $fvaEntity->fvaOpen = 'fva' . $_GET['ano'];
+
+            //$fvaAtual = $plugin->getCurrentFva();
+            #echo json_encode($fvaEntity);die;
+            $fvaEntity->save(true);
         });
 
         $app->hook('GET(panel.fvaOpenYear)', function() use($app, $plugin){
@@ -170,7 +188,7 @@ class Plugin extends \MapasCulturais\Plugin {
             ->setCellValue('Q1', 'Opinião Sobre o Questionário FVA');
 
             // Preenche a planilha com os dados
-            $self->writeSheetLines($museusRelatorio, $objPHPExcel, $self);
+            $plugin->writeSheetLines($museusRelatorio, $objPHPExcel, $plugin);
 
             // Nomeia a Planilha
             $objPHPExcel->getActiveSheet()->setTitle('Relatório FVA 2018');
@@ -277,7 +295,15 @@ class Plugin extends \MapasCulturais\Plugin {
         $registerCurrentFva = $this->getCurrentFva();
 
         $this->registerSpaceMetadata($registerCurrentFva, array(
-            'label' => $registerCurrentFva
+            'label'   => $registerCurrentFva,
+        ));
+
+        $this->registerMetadata('MapasCulturais\Entities\Subsite', 'fvaOpen', array(
+            'label' => 'fvaOpen'
+        ));
+
+        $this->registerMetadata('MapasCulturais\Entities\Subsite', 'yearsAvailable', array(
+            'label' => 'yearsAvailable'
         ));
 
     }
@@ -287,10 +313,10 @@ class Plugin extends \MapasCulturais\Plugin {
      *
      * @param array $museus
      * @param obj $objPHPExcel
-     * @param pointer $self
+     * @param pointer $plugin
      * @return void
      */
-    private function writeSheetLines($museus, $objPHPExcel, $self) {
+    private function writeSheetLines($museus, $objPHPExcel, $plugin) {
         $line = 2; //A primeira linha destina-se aos cabeçalhos das colunas
 
         foreach($museus as $m) {
@@ -303,15 +329,15 @@ class Plugin extends \MapasCulturais\Plugin {
                         ->setCellValue('D' . (string)$line, $fva->responsavel->email->answer)
                         ->setCellValue('E' . (string)$line, $fva->responsavel->telefone->answer)
                         ->setCellValue('F' . (string)$line, $fva->introducao->primeiraParticipacaoFVA->answer === true ? 'Sim' : 'Não')
-                        ->setCellValue('G' . (string)$line, $self->assertBlockAnswers($fva->introducao->questionarioNaoParticipou->motivos))
+                        ->setCellValue('G' . (string)$line, $plugin->assertBlockAnswers($fva->introducao->questionarioNaoParticipou->motivos))
                         ->setCellValue('H' . (string)$line, $fva->introducao->questionarioNaoParticipouOutros->answer !== false ? $fva->introducao->questionarioNaoParticipouOutros->text : '')
                         ->setCellValue('I' . (string)$line, $fva->visitacao->realizaContagem === true ? 'Sim' : 'Não')
-                        ->setCellValue('J' . (string)$line, $self->assertBlockAnswers($fva->visitacao->tecnicaContagem))
+                        ->setCellValue('J' . (string)$line, $plugin->assertBlockAnswers($fva->visitacao->tecnicaContagem))
                         ->setCellValue('K' . (string)$line, $fva->visitacao->tecnicaContagemOutros->answer !== false ? $fva->visitacao->tecnicaContagemOutros->text : '')
                         ->setCellValue('L' . (string)$line, $fva->visitacao->justificativaBaixaVisitacao->answer !== null ? $fva->visitacao->justificativaBaixaVisitacao->answer : '')
                         ->setCellValue('M' . (string)$line, $fva->visitacao->quantitativo->answer !== null ? $fva->visitacao->quantitativo->answer : '')
                         ->setCellValue('N' . (string)$line, $fva->visitacao->observacoes->answer !== null ? $fva->visitacao->observacoes->answer : '')
-                        ->setCellValue('O' . (string)$line, $self->assertBlockAnswers($fva->avaliacao->midias))
+                        ->setCellValue('O' . (string)$line, $plugin->assertBlockAnswers($fva->avaliacao->midias))
                         ->setCellValue('P' . (string)$line, $fva->avaliacao->midiasOutros->answer !== false ? $fva->avaliacao->midiasOutros->text : '')
                         ->setCellValue('Q' . (string)$line, $fva->avaliacao->opiniao->text !== null ? $fva->avaliacao->opiniao->text : '');
 
