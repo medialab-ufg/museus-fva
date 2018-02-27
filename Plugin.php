@@ -23,17 +23,26 @@ class Plugin extends \MapasCulturais\Plugin {
         
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app){
-            $spaceEntity = $app->view->controller->requestedEntity;
-            
-            if ($spaceEntity->canUser('@control'))
-                $this->part('fva-tab');
+            $this->part('fva-tab');
         });
 
-        $app->hook('template(space.single.tabs-content):end', function() use($app){
+        $app->hook('template(space.single.tabs-content):end', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
+            $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
             
-            if ($spaceEntity->canUser('@control'))
-                $this->part('fva-form');
+            if ($spaceEntity->canUser('@control') || empty($questionarioRespondido)) {
+                $this->part('fva-form');                
+            } else {
+                echo '<div class="alert info">
+                    
+                PARABÉNS! O FVA 2017 deste Museu já foi preenchido.
+                <br /><br />
+                O Ibram agradece a contribuição no levantamento de informações sobre o campo museal.
+                <br /><br />
+                Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br
+                </div>';
+            }
+            
         });
         
         $app->hook('mapasculturais.head', function() use($app, $plugin){
@@ -43,7 +52,7 @@ class Plugin extends \MapasCulturais\Plugin {
             * Checa se o questionário corrente já foi respondido. Caso sim, ele é adicionado na chave 'respondido' e depois é acessado
             * no javascript via objeto global MapasCulturais (MapasCulturais.respondido) 
             */
-            if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
+            if($spaceEntity && $spaceEntity->getEntityType() == 'Space'){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
                 
                 if(!empty($questionarioRespondido)){
@@ -64,16 +73,14 @@ class Plugin extends \MapasCulturais\Plugin {
          * Salva o JSON com as respostas
          */
         $app->hook('POST(space.fvaSave)', function () use($app, $plugin){
-            $this->requireAuthentication();
+            
             $spaceEntity = $app->view->controller->requestedEntity;
-            
-            if (!$spaceEntity->canUser('@control'))
-                return false;
-            
             $fvaAnswersJson = file_get_contents('php://input');
             $currentFva = $plugin->getCurrentFva();
             $spaceEntity->{$currentFva} = $fvaAnswersJson;
+            $app->disableAccessControl();
             $spaceEntity->save(true);
+            $app->enableAccessControl();
         });
     }
 
