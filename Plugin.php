@@ -120,7 +120,8 @@ class Plugin extends \MapasCulturais\Plugin {
         $registerCurrentFva = $this->getCurrentFva();
 
         $this->registerSpaceMetadata($registerCurrentFva, array(
-            'label' => $registerCurrentFva
+            'label' => $registerCurrentFva,
+            'private' => true
         ));
     }
 }
