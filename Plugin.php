@@ -39,7 +39,7 @@ class Plugin extends \MapasCulturais\Plugin {
                 <br /><br />
                 O Ibram agradece a contribuição no levantamento de informações sobre o campo museal.
                 <br /><br />
-                Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br
+                Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br ou pelos telefones (61) 3521-4410, (61) 3521-4291, (61) 3521-4330, (61) 3521-4329, (61) 3521-4292
                 </div>';
             }
             
