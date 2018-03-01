@@ -21,46 +21,36 @@ class Plugin extends \MapasCulturais\Plugin {
 
         $plugin = $this;
 
-        $app->hook('GET(panel.anos)', function() use($app, $plugin){
-            $yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'));
-            $yearsAvailable = json_decode($yearsAvailable[0]->value);
-
-            echo json_encode($yearsAvailable);
-            die;
-        });
-
         //Grava a flag que FVA está disponível para ser respondido
         $app->hook('POST(panel.fvaOpenYear)', function() use($app, $plugin){
-            $fvaCurrentStatus = json_decode(file_get_contents('php://input'));
+            $newFva = json_decode(file_get_contents('php://input'));
 
-            echo $fvaCurrentStatus;
+            $subsite = $app->getCurrentSubsite();
+            $subsite->fvaOpen = $newFva;
 
-            $fvaEntity = $app->repo('SubsiteMeta');
-            $fvaEntity->fvaOpen = 'fva' . $fvaCurrentStatus;
+            //Verifica se a entidade 'SubsiteMeta' já tem o array referente aos anos de aplicação do FVA
+            if(!empty($newFva)){
+                if($subsite->getMetadata('yearsAvailable')){
+                    $yearsAvailable = json_decode($subsite->getMetadata('yearsAvailable'));
 
-            $fvaAtual = $plugin->getCurrentFva();
-            //echo json_encode($fvaEntity);die;
-            $fvaEntity->save(true);
+                    //Verifica se já existe o ano no array
+                    if(!in_array($newFva, $yearsAvailable)){
+                        $yearsAvailable[] = $newFva;
+                    }
+
+                }else{
+                    $yearsAvailable[] = $newFva;
+                }
+
+                $subsite->yearsAvailable = json_encode($yearsAvailable);
+            }
+
+            $subsite->save(true);
         });
 
-        $app->hook('GET(panel.teste)', function() use($app, $plugin){
-
-            #echo $_GET['ano'];
-
-            $fvaEntity = $app->repo('SubsiteMeta')->find(1);
-            $fvaEntity->fvaOpen = 'fva' . $_GET['ano'];
-
-            //$fvaAtual = $plugin->getCurrentFva();
-            #echo json_encode($fvaEntity);die;
-            $fvaEntity->save(true);
-        });
 
         $app->hook('GET(panel.fvaOpenYear)', function() use($app, $plugin){
-            $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
-            $fvaOpen = json_decode($fvaOpen[0]->value);
-
-            echo $plugin->getCurrentFvaYear();
-            die;
+            echo $plugin->getCurrentFva();
         });
 
         $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
@@ -70,13 +60,11 @@ class Plugin extends \MapasCulturais\Plugin {
             $years = Array();
             foreach ($yearsAvailable as $key => $fva) {
                 $years[] = array(
-                    'fva'   => $fva,
-                    'year'  => substr($fva,3)
+                    'year'  => $fva
                 );
             }
 
             echo json_encode($years);
-            die;
         });
 
         //Insere a aba FVA com o questionário no tema
@@ -292,6 +280,8 @@ class Plugin extends \MapasCulturais\Plugin {
     }
 
     public function register() {
+        $app = App::i();
+
         $registerCurrentFva = $this->getCurrentFva();
 
         $this->registerSpaceMetadata($registerCurrentFva, array(
@@ -299,13 +289,28 @@ class Plugin extends \MapasCulturais\Plugin {
             'private' => true
         ));
 
-        $this->registerMetadata('MapasCulturais\Entities\Subsite', 'fvaOpen', array(
-            'label' => 'fvaOpen'
-        ));
+        $metadata = [
+            'MapasCulturais\Entities\Subsite' => [
+                'fvaOpen' => [
+                    'label'       => 'Formulário de Visitação Anual',
+                    'private'     => true,
+                    'validations' => [
+                        'v::leapYear()' => 'O valor deve ser um ano com 4 dígitos'
+                    ]
+                ],
+                'yearsAvailable' => [
+                    'label'   => 'FVAs disponíveis de anos já realizados',
+                    'private' => true
+                ]
+            ]
+        ];
 
-        $this->registerMetadata('MapasCulturais\Entities\Subsite', 'yearsAvailable', array(
-            'label' => 'yearsAvailable'
-        ));
+        foreach($metadata as $entity_class => $metas){
+            foreach($metas as $key => $cfg){
+                $def = new \MapasCulturais\Definitions\Metadata($key, $cfg);
+                $app->registerMetadata($def, $entity_class);
+            }
+        }
 
     }
 

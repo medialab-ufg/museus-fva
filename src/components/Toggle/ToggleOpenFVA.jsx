@@ -4,7 +4,6 @@ import{ Modal, Button, Input, Menu, Dropdown, Icon, message } from'antd';
 
 
 function handleButtonClick(e) {
-    message.info('Click on left button.');
     console.log('click left button', e);
 }
 
@@ -24,6 +23,7 @@ export default class ToggleOpenFVA extends React.Component {
     }
 
     showModal() {
+        $('input[name=newFvaYear]').val('');
         this.setState({
             visible: true,
         });
@@ -46,8 +46,6 @@ export default class ToggleOpenFVA extends React.Component {
 
             $('input[name=newFvaYear]').val(e.key);
         }
-
-        console.log('click', e);
     }
 
 
@@ -90,22 +88,33 @@ export default class ToggleOpenFVA extends React.Component {
     closeFVA() {
         this.setState({
             newFvaYear: false,
+            fvaOpenYear: false
         });
+
+        this.saveFVAStatus();
     }
 
 
     saveFVAStatus() {
         this.setState({ loading: true });
 
+        const self = this;
+
         $.ajax({
             url: MapasCulturais.createUrl('panel', 'fvaOpenYear'),
             type: 'POST',
-            data: JSON.stringify(this.state.newFvaYear),
-            dataType:'json',
-        }).done(function(data) {
-            console.log(data);
-            this.setState({loading: false});
-        }.bind(this));
+            data: JSON.stringify(self.state.newFvaYear),
+            dataType:'json'
+        }).done(function() {
+
+        });
+
+        self.setState({
+            loading: false,
+            fvaOpenYear: self.state.newFvaYear,
+            newFvaYear: '',
+            visible: false
+        });
     }
 
     render() {
@@ -124,7 +133,7 @@ export default class ToggleOpenFVA extends React.Component {
 
         let button = null;
 
-        if(this.state.fvaYear) {
+        if(this.state.fvaOpenYear) {
             button = <Button type="danger" onClick={this.closeFVA.bind(this)}>Fechar Questionário {this.state.fvaOpenYear}</Button>;
         }
         else{
@@ -142,7 +151,7 @@ export default class ToggleOpenFVA extends React.Component {
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
                         <Button key="back" onClick={this.handleCancel.bind(this)}>Cancelar</Button>,
-                        <Button key="submit" type="primary" loading={loading} onClick={this.saveFVAStatus.bind(this)} disabled={this.state.newFvaYear === '' ? true : false}>Abrir FVA</Button>,
+                        <Button key="submit" type="primary" loading={this.state.loading} onClick={this.saveFVAStatus.bind(this)} disabled={this.state.newFvaYear === '' ? true : false}>Abrir FVA</Button>,
                     ]}
                 >
 
