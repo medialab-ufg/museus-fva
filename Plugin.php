@@ -79,7 +79,7 @@ class Plugin extends \MapasCulturais\Plugin {
             $spaceEntity = $app->view->controller->requestedEntity;
 
             if ($spaceEntity->canUser('@control'))
-                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);
+                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFva()]);
         });
 
         //Painel do Admin FVA
@@ -269,14 +269,12 @@ class Plugin extends \MapasCulturais\Plugin {
     private function getCurrentFva(){
         $app = App::i();
 
-        $fvaOpen = $app->repo('SubsiteMeta')->findBy(array('key' => 'fvaOpen'));
-        $currentFva = (empty($fvaOpen)) ? json_encode(array()) : json_decode($fvaOpen[0]->value);
+        $subsite = $app->getCurrentSubsite();
+
+        $fvaOpen = $subsite->getMetadata('fvaOpen');
+        $currentFva = (empty($fvaOpen)) ? json_encode(array()) : $fvaOpen;
 
         return $currentFva;
-    }
-
-    private function getCurrentFvaYear(){
-        return substr($this->getCurrentFva(),3);
     }
 
     public function register() {

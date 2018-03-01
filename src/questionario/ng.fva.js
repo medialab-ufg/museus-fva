@@ -21,6 +21,8 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                     MapasCulturais.Messages.error('erro no ano');
                 }
             );*/
+
+        $scope.ano = $('#fva-form').data('fvaopenyear');
         $state.go('index');
     }
 }])
