@@ -77,9 +77,12 @@ class Plugin extends \MapasCulturais\Plugin {
             $spaceEntity = $app->view->controller->requestedEntity;
             $fvaAnswersJson = file_get_contents('php://input');
             $currentFva = $plugin->getCurrentFva();
-            $spaceEntity->{$currentFva} = $fvaAnswersJson;
             $app->disableAccessControl();
-            $spaceEntity->save(true);
+            $fvaMeta = new Entities\SpaceMeta();
+			$fvaMeta->key = $currentFva;
+			$fvaMeta->owner = $spaceEntity;
+			$fvaMeta->value = $fvaAnswersJson;
+			$fvaMeta->save(true);
             $app->enableAccessControl();
         });
     }
