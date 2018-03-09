@@ -13,7 +13,7 @@ export default class AdminPanel extends React.Component {
         return(
             <div id="panel-container">
                 <div id="select-year-container">
-                    <SelectFVAYear />
+                    <SelectFVAYear parentHandler={this.props.parentHandler} />
                 </div>
                 <div id="toggle-container">
                     <ToggleOpenFVA />
@@ -25,7 +25,7 @@ export default class AdminPanel extends React.Component {
                     <PieChart percentual={this.props.percentual} />
                 </div>
                 <div id="table-container">
-                    <MuseusTable museus={this.props.museus} parentHandler= {this.props.parentHandler} />
+                    <MuseusTable museus={this.props.museus} parentHandler={this.props.parentHandler} fvaYear={this.props.fvaYear}/>
                 </div>
                 <div id="generate-report">
                     <Excel filteredMuseums={this.props.filteredMuseums} />

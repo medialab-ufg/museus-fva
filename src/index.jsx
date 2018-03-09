@@ -1,22 +1,24 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
 import React from'react';
 import ReactDOM from'react-dom';
-import AdminPanel from'./components/Panel/AdminPanel.jsx';
+//import AdminPanel from'./components/Panel/AdminPanel.jsx';
 import _ from'lodash';
 
-class Index extends React.Component {
+import PanelYear from'./components/Panel/PanelYear.jsx';
+import ToggleOpenFVA from'./components/Toggle/ToggleOpenFVA.jsx';
+import SelectFVAYear from'./components/Select/SelectFVAYear.jsx';
+
+/*class Index extends React.Component {
     constructor() {
         super();
 
         this.state = {
-            museusData: null,
-            selectedYear: null
+            museusData:           null,
+            selectedYear:         5002,
+            _qtdRespostas:        null,
+            _percentualRespostas: null,
+            _filteredMuseums:     null,
         };
-
-        this._qtdRespostas        = null;
-        this._percentualRespostas = null;
-        this._filteredMuseums     = null;
-        this.years                = null;
 
         this.fetchMuseus          = this.fetchMuseus.bind(this);
         this.updateState          = this.updateState.bind(this);
@@ -27,8 +29,29 @@ class Index extends React.Component {
         this.updateState();
     }
 
+    countFvasRespondidos(museusJson) {
+        const self = this;
+        const totalMuseus = museusJson.length;
+        let respondidos = 0;
+        let naoRespondidos = 0;
+
+        _.each(museusJson, function(value, key) {
+            _.each(value, function(value, key) {
+                if(key === 'fva' + self.state.selectedYear) {
+                    if(value !== null) {
+                        respondidos++;
+                    }
+                }
+            });
+        });
+
+        naoRespondidos = totalMuseus - respondidos;
+
+        return{respondidos, naoRespondidos};
+    }
+
     fetchMuseus() {
-        const endpointURL = MapasCulturais.baseURL + 'api/space/find/?@select=name,fva2018,emailPublico,En_Estado,En_Municipio,telefonePublico,mus_cod';
+        const endpointURL = MapasCulturais.baseURL + 'api/space/find/?@select=name,fva' + this.state.selectedYear + ',emailPublico,En_Estado,En_Municipio,telefonePublico,mus_cod';
         //const endpointURL = 'http://museus.mapas.local:8090/api/space/find/?@select=name,fva2018,emailPublico,En_Estado,En_Municipio,telefonePublico,mus_cod';
 
         fetch(endpointURL, {
@@ -40,11 +63,14 @@ class Index extends React.Component {
             .then(response => {
                 response.json()
                     .then(data => {
-                        const qtdRespostas = countFvasRespondidos(data);
+                        const qtdRespostas = this.countFvasRespondidos(data);
                         const percentualRespostas = calculatePercentual(data.length, qtdRespostas.respondidos);
-                        this._qtdRespostas = qtdRespostas;
-                        this._percentualRespostas = percentualRespostas;
-                        this.setState({museusData: data});
+
+                        this.setState({
+                            museusData: data,
+                            _qtdRespostas: qtdRespostas,
+                            _percentualRespostas: percentualRespostas
+                        });
                     });
             });
 
@@ -53,33 +79,14 @@ class Index extends React.Component {
          * @param {JSON} museusJson
          * @return {OBJ}
          */
-        function countFvasRespondidos(museusJson) {
-            const totalMuseus = museusJson.length;
-            let respondidos = 0;
-            let naoRespondidos = 0;
 
-            _.each(museusJson, function(value, key) {
-                _.each(value, function(value, key) {
-                    if(key === 'fva2018') {
-                        if(value !== null) {
-                            respondidos++;
-                        }
-                    }
-                });
-            });
-
-            naoRespondidos = totalMuseus - respondidos;
-
-            return{respondidos, naoRespondidos};
-        }
-
-        /**
+/**
          * Contabiliza o percentual de museus que responderam o FVA
          * @param {INT} totalMuseus
          * @param {INT} totalMuseusResponderam
          * @return {INT}
          */
-        function calculatePercentual(totalMuseus, totalMuseusResponderam) {
+/*function calculatePercentual(totalMuseus, totalMuseusResponderam) {
             const percentualRespondido = _.round(totalMuseusResponderam / totalMuseus * 100, 2);
             let totalPercent = [];
 
@@ -99,14 +106,19 @@ class Index extends React.Component {
     }
 
     //update o estado da aplicação
-    updateState() {
+    updateState(e = null) {
+        if(e !== null) {
+            this.setState({selectedYear: e.key});
+        }
+
         this.fetchMuseus();
     }
 
     //filtra os museus que responderam o FVA para gerar o relatório em planilha
     filterMuseums() {
-        this._filteredMuseums = this.state.museusData.filter((element) => {
-            return element.fva2018 !== null;
+        const self = this;
+        this.state._filteredMuseums = this.state.museusData.filter((element) => {
+            return element['fva' + self.state.selectedYear] !== null;
         });
     }
 
@@ -114,13 +126,15 @@ class Index extends React.Component {
         if(this.state.museusData !== null) {
             this.filterMuseums();
 
+
             return(
                 <AdminPanel
-                    museus={this.state.museusData}
-                    respostas={this._qtdRespostas}
-                    percentual={this._percentualRespostas}
-                    parentHandler={this.updateState}
-                    filteredMuseums={this._filteredMuseums}
+                    museus          = {this.state.museusData}
+                    respostas       = {this.state._qtdRespostas}
+                    percentual      = {this.state._percentualRespostas}
+                    parentHandler   = {this.updateState}
+                    filteredMuseums = {this.state._filteredMuseums}
+                    fvaYear         = {this.state.selectedYear}
                 />
             );
         }
@@ -128,8 +142,35 @@ class Index extends React.Component {
             return null;
         }
     }
+}*/
+
+
+class FVA extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            selectedYear: null
+        };
+    }
+
+    updateYear(e) {
+        this.setState({selectedYear: e.key});
+        console.log(this.state.selectedYear);
+    }
+
+    render() {
+        return(
+            <div>
+                <ToggleOpenFVA />
+                <SelectFVAYear updateYear={this.updateYear.bind(this)}/>
+
+                <PanelYear selectedYear={this.state.selectedYear}/>
+            </div>
+        );
+    }
 }
 
 $(document).ready(function() {
-    ReactDOM.render(<Index />, document.getElementById('root'));
+    ReactDOM.render(<FVA />, document.getElementById('root'));
 });
