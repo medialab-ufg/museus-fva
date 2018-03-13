@@ -1,7 +1,8 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
 import React from'react';
+import{ Button, Radio, Icon } from'antd';
 
-export default class Excel extends React.PureComponent {
+export default class Excel extends React.Component {
     constructor(props) {
         super(props);
 
@@ -30,7 +31,7 @@ export default class Excel extends React.PureComponent {
             let $a = $('<a>');
             $a.attr('href', data.file);
             $('body').append($a);
-            $a.attr('download', 'file.xls');
+            $a.attr('download', `Relatorio_FVA_${data.year}.xls`);
             $a[0].click();
             $a.remove();
         });
@@ -38,7 +39,7 @@ export default class Excel extends React.PureComponent {
 
     render() {
         return(
-            <button id='btn-generate-report' onClick={this.generateXls}>Gerar Relatório</button>
+            <Button type="primary" icon="download" size='large' id='btn-generate-report' onClick={this.generateXls}>Gerar Relatório</Button>
         );
     }
 }

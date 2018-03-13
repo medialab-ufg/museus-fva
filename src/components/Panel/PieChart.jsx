@@ -2,7 +2,7 @@
 import React from'react';
 import{Pie} from'react-chartjs-2';
 
-export default class PieChart extends React.PureComponent {
+export default class PieChart extends React.Component {
     constructor(props) {
         super(props);
 
@@ -15,8 +15,10 @@ export default class PieChart extends React.PureComponent {
         if(nextProps.percentual !== this.state.percent) {
             this.setState({percent: nextProps.percentual});
         }
+
+
     }
-    
+
     render() {
         const data = {
             labels: [
@@ -49,12 +51,14 @@ export default class PieChart extends React.PureComponent {
                 }
             }
         };
-        
+
         return(
-            <Pie 
+            <Pie
                 data={data}
                 legend={legend}
                 options={options}
+                width={900}
+                height={300}
             />
         );
     }

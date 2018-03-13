@@ -3,6 +3,8 @@ namespace Fva;
 
 use MapasCulturais\app;
 use MapasCulturais\Entities;
+
+require_once "vendor/autoload.php";
 /**
  *      Este plugin é responsável por gerar o formulário para preenchimento do FVA (Formulário de Visitação Anual).
  * A cada ano, o IBRAM aplica um novo questionário que deve ser preenchido pelos museus a fim de, principalmente, ter um controle
@@ -48,38 +50,43 @@ class Plugin extends \MapasCulturais\Plugin {
             $subsite->save(true);
         });
 
-
+        //Se o FVA estiver aberto, retorna o ano
         $app->hook('GET(panel.fvaOpenYear)', function() use($app, $plugin){
-            echo $plugin->getCurrentFva();
+            if($plugin->getCurrentFva() == '[]')
+                echo null;
+            else
+                echo $plugin->getCurrentFvaYear();
         });
 
-        $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
-            $yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'));
-            $yearsAvailable = json_decode($yearsAvailable[0]->value);
-
-            $years = Array();
-            foreach ($yearsAvailable as $key => $fva) {
-                $years[] = array(
-                    'year'  => $fva
-                );
+        //Retorna o último FVA realizado, caso não tenha nenhum FVA aberto
+        $app->hook('GET(panel.lastFvaOpenYear)', function() use($app, $plugin){
+            if(!$plugin->getCurrentFvaYear()){
+                $fvas = json_decode($plugin->fvaYearsAvailable($app),true);
+                echo $fvas[count($fvas)-1]['year'];
+            }else{
+                echo $plugin->getCurrentFvaYear();
             }
+        });
 
-            echo json_encode($years);
+        //Retorna array com FVAs realizados
+        $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
+            echo $plugin->fvaYearsAvailable($app);
         });
 
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
 
-            if ($spaceEntity->canUser('@control') && empty($this->getCurrentFva()))
+            if ($spaceEntity->canUser('@control') && empty($plugin->getCurrentFva()))
                 $this->part('fva-tab');
         });
 
+        //Insere o form do FVA
         $app->hook('template(space.single.tabs-content):end', function() use($app,$plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
 
-            if ($spaceEntity->canUser('@control'))
-                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFva()]);
+            if ($spaceEntity->canUser('@control') && empty($plugin->getCurrentFva()))
+                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);
         });
 
         //Painel do Admin FVA
@@ -146,14 +153,26 @@ class Plugin extends \MapasCulturais\Plugin {
             // JSON dos museus a serem inclusos no relatório
             $museusRelatorio = json_decode(file_get_contents('php://input'));
 
+            //Recupera um museu para verficar de qual ano são os dados
+            $year = 0;
+            foreach ($museusRelatorio[0] as $key => $value) {
+                if (preg_match("/^fva([0-9]{4})$/", $key)){
+                    $year = substr($key,3);
+                    break;
+                }else{
+                    continue;
+                }
+            }
+
+
             // Propriedades do Documento
             $objPHPExcel->getProperties()->setCreator("IBRAM")
             ->setLastModifiedBy("IBRAM")
-            ->setTitle("Relatório de Respostas do FVA Corrente")
-            ->setSubject("Relatório de Respostas do FVA Corrente")
-            ->setDescription("Relatório de Respostas do FVA Corrente")
-            ->setKeywords("Relatório FVA")
-            ->setCategory("Relatório");
+            ->setTitle("Relatório de Respostas do FVA $year")
+            ->setSubject("Relatório de Respostas do FVA $year")
+            ->setDescription("Relatório de Respostas do FVA $year")
+            ->setKeywords("Relatório FVA $year")
+            ->setCategory("Relatório $year");
 
             // Legenda das Colunas da Planilha
             $objPHPExcel->setActiveSheetIndex(0)
@@ -176,10 +195,10 @@ class Plugin extends \MapasCulturais\Plugin {
             ->setCellValue('Q1', 'Opinião Sobre o Questionário FVA');
 
             // Preenche a planilha com os dados
-            $plugin->writeSheetLines($museusRelatorio, $objPHPExcel, $plugin);
+            $plugin->writeSheetLines($museusRelatorio, $objPHPExcel, $plugin, $year);
 
             // Nomeia a Planilha
-            $objPHPExcel->getActiveSheet()->setTitle('Relatório FVA 2018');
+            $objPHPExcel->getActiveSheet()->setTitle("Relatório FVA $year");
 
             // Seta a primeira planilha como a ativa
             $objPHPExcel->setActiveSheetIndex(0);
@@ -205,7 +224,8 @@ class Plugin extends \MapasCulturais\Plugin {
             ob_end_clean();
 
             $response =  array(
-                'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+                'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData),
+                'year' => $year
             );
 
             echo json_encode($response);
@@ -232,12 +252,12 @@ class Plugin extends \MapasCulturais\Plugin {
         });
 
         //Apaga o FVA do museu do id fornecido
-        $app->hook('POST(panel.resetFVA)', function() use($app){
+        $app->hook('POST(panel.resetFVA)', function() use($app, $plugin){
             $this->requireAuthentication();
 
             $id = json_decode(file_get_contents('php://input'));
             $spaceEntity = $app->repo('Space')->find($id);
-            $spaceFva = $spaceEntity->getMetadata('fva2018', true);
+            $spaceFva = $spaceEntity->getMetadata($plugin->getCurrentFva(), true);
             $spaceFva->delete(true);
         });
     }
@@ -271,21 +291,28 @@ class Plugin extends \MapasCulturais\Plugin {
 
         $subsite = $app->getCurrentSubsite();
 
-        $fvaOpen = $subsite->getMetadata('fvaOpen');
+        $fvaOpen = 'fva' . $subsite->getMetadata('fvaOpen');
         $currentFva = (empty($fvaOpen)) ? json_encode(array()) : $fvaOpen;
 
         return $currentFva;
     }
 
+    private function getCurrentFvaYear(){
+        return substr($this->getCurrentFva(),3);
+    }
+
     public function register() {
         $app = App::i();
 
-        $registerCurrentFva = $this->getCurrentFva();
+        //Registra todos os metadados de todos os FVAs realizados
+        $fvas = json_decode($this->fvaYearsAvailable($app),true);
+        foreach ($fvas as $key => $year) {
+            $this->registerSpaceMetadata('fva'.$year['year'], array(
+                'label'   => 'fva'.$year['year'],
+                'private' => true
+            ));
+        }
 
-        $this->registerSpaceMetadata($registerCurrentFva, array(
-            'label'   => $registerCurrentFva,
-            'private' => true
-        ));
 
         $metadata = [
             'MapasCulturais\Entities\Subsite' => [
@@ -320,11 +347,11 @@ class Plugin extends \MapasCulturais\Plugin {
      * @param pointer $plugin
      * @return void
      */
-    private function writeSheetLines($museus, $objPHPExcel, $plugin) {
+    private function writeSheetLines($museus, $objPHPExcel, $plugin, $year) {
         $line = 2; //A primeira linha destina-se aos cabeçalhos das colunas
 
         foreach($museus as $m) {
-            $fva = json_decode($m->fva2018);
+            $fva = json_decode($m->{'fva' . $year});
 
             $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('A' . (string)$line, $m->name)
@@ -367,6 +394,23 @@ class Plugin extends \MapasCulturais\Plugin {
         }
         $return = implode(", ", $answers);
         return $return;
+    }
+
+    private function fvaYearsAvailable($app){
+        if($yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'))){
+            $yearsAvailable = json_decode($yearsAvailable[0]->value);
+
+            $years = Array();
+            foreach ($yearsAvailable as $key => $fva) {
+                $years[] = array(
+                    'year'  => $fva
+                );
+            }
+
+            return json_encode($years);
+        }
+
+        return false;
     }
 
 

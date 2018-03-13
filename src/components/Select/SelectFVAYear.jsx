@@ -29,16 +29,8 @@ export default class SelectFVAYear extends React.Component {
         }.bind(this));
     }
 
-    handleMenuClick(e) {
-        this.props.selectedYear = e.key;
-        console.log(e);
-    }
-
-
     render() {
         const handler = this.props.parentHandler;
-
-        //handler();
 
         const menu = (
             <Menu onClick={this.updateYear}>
@@ -50,7 +42,7 @@ export default class SelectFVAYear extends React.Component {
         );
 
         return(
-            <div>
+            <div id="fva-selectyear">
                 <Dropdown.Button overlay={menu} style={{float: 'right'}}>
                   Selecione o Ano
                 </Dropdown.Button>

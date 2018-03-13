@@ -1,3 +1,19 @@
+#toobar-fva{
+    height: 60px;
+}
+
+#toobar-fva #fva-toogleopen{
+    float: left;
+}
+
+#toobar-fva #fva-selectyear{
+    float: right;
+}
+
+#panel-container h2, #loading{
+    text-align: center;
+}
+
 #chart-container {
     margin-bottom: 50px;
 }
@@ -42,7 +58,7 @@
 .-pagination .-center {
     width: 60%;
     flex: none;
-} 
+}
 
 
 .ReactTable .-pagination .-pageJump input {
@@ -60,18 +76,6 @@
     padding-bottom: 100px;
 }
 
-.btn-reopen, #btn-generate-report {
-    font-size: 12px;
-    padding: 0 10px;
-    margin: 0;
-    background: #DDD;
-    border: 1px solid #666;
-    color: #000;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-}
 
 #btn-generate-report {
     margin-top: 15px;
@@ -79,4 +83,41 @@
 
 .input-filter {
     width: 100%;
+}
+
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid #333;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #333 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

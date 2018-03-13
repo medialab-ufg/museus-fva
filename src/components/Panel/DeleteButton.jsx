@@ -2,11 +2,12 @@
 import React from'react';
 import ReactConfirmAlert, { confirmAlert } from'react-confirm-alert';
 import'react-confirm-alert/src/react-confirm-alert.css';
+import{ Button, Radio, Icon } from'antd';
 
 export default class DeleteButton extends React.PureComponent {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             museumId: this.props.museumId
         };
@@ -41,7 +42,7 @@ export default class DeleteButton extends React.PureComponent {
 
     render() {
         return(
-            <button className="btn-reopen" onClick={this.showConfirmDialog}>Reabrir</button>
+            <Button type="primary" size='small' onClick={this.showConfirmDialog}>Reabir</Button>
         );
     }
 }

@@ -6,8 +6,34 @@ import DeleteButton from'./DeleteButton.jsx';
 
 export default class MuseusTable extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            fvaOpenYear: this.props.openYear,
+        };
+
+        this.handler = this.props.parentHandler;
+    }
+
+    respostaMuseu(e) {
+        if(e.row['fva' + this.props.fvaYear] !== null) {
+            if(this.state.fvaOpenYear !== null) {
+                if(this.props.fvaYear === this.state.fvaOpenYear.toString()) {
+                    return(<DeleteButton museumId={e.original.id} parentHandler={this.handler}/>);
+                }
+            }
+
+            return(<b>Sim</b>);
+        }
+        else{
+            return'Não';
+        }
+    }
+
+
     render() {
-        const handler = this.props.parentHandler;
+
         const filterMuseu = (filter, row) => row.name.toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
         const filterMunicipio = (filter, row) => row.En_Municipio === null ? false : row.En_Municipio.toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
 
@@ -26,7 +52,7 @@ export default class MuseusTable extends React.Component {
         }, {
             Header: 'Respondido',
             filterable: false,
-            accessor: 'fva2018',
+            accessor: 'fva' + this.props.fvaYear,
             getProps: () => {
                 return{
                     style: {
@@ -34,7 +60,9 @@ export default class MuseusTable extends React.Component {
                     }
                 };
             },
-            Cell: props => <span>{props.row.fva2018 !== null ? <DeleteButton museumId={props.original.id} parentHandler={handler}/>: 'não'}</span>,
+            Cell: props => <span>{
+                this.respostaMuseu(props)
+            }</span>,
             width: 100
         }, {
             Header: 'Cidade',
@@ -48,7 +76,7 @@ export default class MuseusTable extends React.Component {
                     style={{ width: '100%' }}
                     onChange={event => onChange(event.target.value)}
                 />
-            
+
         }, {
             Header: 'UF',
             filterable: false,
@@ -73,7 +101,7 @@ export default class MuseusTable extends React.Component {
             accessor: 'telefonePublico',
             width: 100
         }];
-        
+
         return(
             <ReactTable
                 className="-striped -highlight fva-table"
