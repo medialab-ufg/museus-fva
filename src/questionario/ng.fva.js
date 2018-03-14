@@ -286,7 +286,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .service('saveFvaQuestions', ['$http', 'fvaQuestions', function($http, fvaQuestions){
     this.save = function(){
-        $http.post(MapasCulturais.createUrl('space', 'fvaSave', [MapasCulturais.entity.id]), angular.toJson(fvaQuestions)).then(function successCallback(response){
+        $http.post(MapasCulturais.createUrl('space', 'fvaSave', [MapasCulturais.entity.id]), angular.toJson(fvaQuestions),{headers:'Content-Type: text/html; charset=utf-8'}).then(function successCallback(response){
             MapasCulturais.Messages.success('Formulário enviado com sucesso!');
         },
         function errorCallback(){
@@ -386,7 +386,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                 }
             },
             justificativaBaixaVisitacao: {
-                label: 'Caso o total de visitação informado tenha sido "0" (zero) ou MUITO abaixo do que seria o padrão do Museu, especifique o(s) motivo(s) abaixo:',
+                label: 'Caso o total de visitação informado tenha sido 0 (zero) ou MUITO abaixo do que seria o padrão do Museu, especifique o(s) motivo(s) abaixo:',
                 answer: null
             },
             tecnicaContagemOutros: {

@@ -246,6 +246,12 @@ class Plugin extends \MapasCulturais\Plugin {
                 return false;
 
             $fvaAnswersJson = file_get_contents('php://input');
+
+            //Decodifica UTF-8, insere o timestamp e transforma novamente em json
+            $fvaAnswersJson = json_decode(utf8_encode($fvaAnswersJson));
+            $fvaAnswersJson->date = time();
+            $fvaAnswersJson = utf8_decode(json_encode($fvaAnswersJson));
+
             $currentFva = $plugin->getCurrentFva();
             $spaceEntity->{$currentFva} = $fvaAnswersJson;
             $spaceEntity->save(true);
