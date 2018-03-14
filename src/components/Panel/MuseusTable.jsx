@@ -19,7 +19,7 @@ export default class MuseusTable extends React.Component {
     respostaMuseu(e) {
         if(e.row['fva' + this.props.fvaYear] !== null) {
             if(this.state.fvaOpenYear !== null) {
-                if(this.props.fvaYear === this.state.fvaOpenYear.toString()) {
+                if(this.props.fvaYear.toString() === this.state.fvaOpenYear.toString()) {
                     return(<DeleteButton museumId={e.original.id} parentHandler={this.handler}/>);
                 }
             }
@@ -67,7 +67,7 @@ export default class MuseusTable extends React.Component {
         }, {
             Header: 'Cidade',
             accessor: 'En_Municipio',
-            width: 200,
+            width: 160,
             filterMethod: filterMunicipio,
             Filter: ({filter, onChange}) =>
                 <input
