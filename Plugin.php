@@ -76,6 +76,12 @@ class Plugin extends \MapasCulturais\Plugin {
             
             $spaceEntity = $app->view->controller->requestedEntity;
             $fvaAnswersJson = file_get_contents('php://input');
+
+            //Decodifica UTF-8, insere o timestamp e transforma novamente em json
+            $fvaAnswersJson = json_decode(utf8_encode($fvaAnswersJson));
+            $fvaAnswersJson->date = time();
+            $fvaAnswersJson = utf8_decode(json_encode($fvaAnswersJson));
+
             $currentFva = $plugin->getCurrentFva();
             $app->disableAccessControl();
             $fvaMeta = new Entities\SpaceMeta();
