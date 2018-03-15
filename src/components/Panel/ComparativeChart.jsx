@@ -21,7 +21,6 @@ export default class ComparativeChart extends React.Component {
             type: 'GET',
             dataType:'json',
             success:function(data) {
-                console.log(data);
                 self.setState({
                     years: data.map((item) => item.year),
                     count: data.map((item) => item.count)
