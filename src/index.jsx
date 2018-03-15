@@ -7,6 +7,7 @@ import _ from'lodash';
 import PanelYear from'./components/Panel/PanelYear.jsx';
 import ToggleOpenFVA from'./components/Toggle/ToggleOpenFVA.jsx';
 import SelectFVAYear from'./components/Select/SelectFVAYear.jsx';
+import ComparativeChart from'./components/Panel/ComparativeChart.jsx';
 
 class FVA extends React.Component {
     constructor() {
@@ -35,6 +36,8 @@ class FVA extends React.Component {
                 </div>
 
                 <PanelYear selectedYear={this.state.selectedYear} openYear={this.state.openYear}/>
+                
+                <ComparativeChart />
             </div>
         );
     }

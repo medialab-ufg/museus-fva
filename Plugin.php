@@ -72,6 +72,22 @@ class Plugin extends \MapasCulturais\Plugin {
         $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
             echo $plugin->fvaYearsAvailable($app);
         });
+        
+        //Retorna json com os números de FVAs respondidos em cada ano
+        $app->hook('GET(panel.fvaAnalytics)', function() use($app, $plugin){
+            // if (!$spaceEntity->canUser('@control')
+                // die;
+            
+            $years = json_decode($plugin->fvaYearsAvailable($app),true);
+            $_years = [];
+            foreach ($years as $key => $year) {
+                $_years[$key]['year']  = $year['year'];
+                $_years[$key]['count'] = count($app->repo('SpaceMeta')->findBy(array('key' => 'fva' . $year['year'])));
+            }
+            
+			echo json_encode($_years);
+            die;
+        });
 
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app, $plugin){
@@ -125,6 +141,7 @@ class Plugin extends \MapasCulturais\Plugin {
                     $app->view->jsObject['respondido'] = $questionarioRespondido;
                 }
 
+                $app->view->enqueueScript('app', 'chart.js', '../node_modules/chart.js/src/chart.js');
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
                 $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
@@ -415,6 +432,7 @@ class Plugin extends \MapasCulturais\Plugin {
     private function fvaYearsAvailable($app){
         if($yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'))){
             $yearsAvailable = json_decode($yearsAvailable[0]->value);
+            sort($yearsAvailable);
 
             $years = Array();
             foreach ($yearsAvailable as $key => $fva) {
