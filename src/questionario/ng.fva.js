@@ -4,33 +4,89 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 //Controller definido em fva-form que faz o roteamento entre um novo questionário ou exibir um questionário já respondido
 .controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', '$http', function($scope, $rootScope, $state, fvaQuestions,$http){
-    if(MapasCulturais.hasOwnProperty('respondido')){
+    /*if(MapasCulturais.hasOwnProperty('respondido')){
         $scope.$root.respostas = angular.fromJson(MapasCulturais.respondido);
         $scope.respostas = fvaQuestions;
 
         $state.go('revisao');
     }
     else{
-        /*$http.post(MapasCulturais.createUrl('panel', 'fvaOpenYear'))
-            .then(
-                function successCallback(response){
-                    //$scope.myWelcome = response.data;
-                    MapasCulturais.Messages.success(response.data);
-                },
-                function errorCallback(){
-                    MapasCulturais.Messages.error('erro no ano');
-                }
-            );*/
-
         $scope.ano = $('#fva-form').data('fvaopenyear');
         $state.go('index');
-    }
+    }*/
+    
+    
+    $http.get(MapasCulturais.createUrl('panel', 'fvaAnalyticsSpace', [MapasCulturais.entity.id])).then(function successCallback(response){
+        var fvaAnalytics = angular.fromJson(response.data);
+            
+        var visitas = [];
+        var years   = [];
+        
+        angular.forEach(fvaAnalytics, function(fva, key) {
+            visitas.push(fva);
+            years.push(key);
+        });
+        
+        var config = {
+			type: 'line',
+			data: {
+				labels: years,
+				datasets: [{
+					backgroundColor: 'rgba(255, 99, 132, 0.2)',
+					borderColor: 'rgba(255, 99, 132, 0.2)',
+					data: visitas,
+					fill: true     ,
+				}]
+			},
+			options: {
+				responsive: true,
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Anos'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Visitantes'
+						}
+					}]
+				},
+                legend: {
+                    display: false
+                }
+			}
+		};
+        
+        var myLineChart = new Chart($('#chartFvaVisitas'), config );
+    },
+    function errorCallback(){
+        MapasCulturais.Messages.error('Houve um erro no servidor. Tente enviar novamente dentro de alguns minutos.');
+    });
+    
+    $state.go('comparativo');
 }])
 
 .controller('indexCtrl', ['$scope', '$state', function($scope, $state){
     $scope.beginFva = function(){
         $state.go('termo-compromisso');
     }
+}])
+
+.controller('comparativoCtrl', ['$scope', '$state', function($scope, $state){
+    
 }])
 
 .controller('termoCompromissoCtrl', ['$scope', '$state', 'fvaQuestions', function ($scope, $state, fvaQuestions) {
@@ -243,6 +299,13 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
         .state('revisao', {
             controller: 'revisaoCtrl',
             templateUrl: pluginTemplatePath + '/revisao.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
+        })
+        .state('comparativo', {
+            controller: 'comparativoCtrl',
+            templateUrl: pluginTemplatePath + '/comparativo.html',
             onEnter: function(){
                 $(document).scrollTop(window.innerHeight/2)
             }

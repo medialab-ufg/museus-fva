@@ -61,7 +61,7 @@ class Plugin extends \MapasCulturais\Plugin {
         //Retorna o último FVA realizado, caso não tenha nenhum FVA aberto
         $app->hook('GET(panel.lastFvaOpenYear)', function() use($app, $plugin){
             if(!$plugin->getCurrentFvaYear()){
-                $fvas = json_decode($plugin->fvaYearsAvailable($app),true);
+                $fvas = json_decode($plugin->fvaYearsAvailable(),true);
                 echo $fvas[count($fvas)-1]['year'];
             }else{
                 echo $plugin->getCurrentFvaYear();
@@ -70,7 +70,7 @@ class Plugin extends \MapasCulturais\Plugin {
 
         //Retorna array com FVAs realizados
         $app->hook('GET(panel.fvaYearsAvailable)', function() use($app, $plugin){
-            echo $plugin->fvaYearsAvailable($app);
+            echo $plugin->fvaYearsAvailable();
         });
         
         //Retorna json com os números de FVAs respondidos em cada ano
@@ -78,7 +78,7 @@ class Plugin extends \MapasCulturais\Plugin {
             // if (!$spaceEntity->canUser('@control')
                 // die;
             
-            $years = json_decode($plugin->fvaYearsAvailable($app),true);
+            $years = json_decode($plugin->fvaYearsAvailable(),true);
             $_years = [];
             foreach ($years as $key => $year) {
                 $_years[$key]['year']  = $year['year'];
@@ -141,7 +141,7 @@ class Plugin extends \MapasCulturais\Plugin {
                     $app->view->jsObject['respondido'] = $questionarioRespondido;
                 }
 
-                $app->view->enqueueScript('app', 'chart.js', '../node_modules/chart.js/src/chart.js');
+                $app->view->enqueueScript('app', 'chart.js', '../node_modules/chart.js/dist/Chart.min.js');
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
                 $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
@@ -248,10 +248,29 @@ class Plugin extends \MapasCulturais\Plugin {
 
             echo json_encode($response);
         });
-
-
-
-
+        
+        $app->hook('GET(panel.fvaAnalyticsSpace)', function () use ($app, $plugin){
+            $id = $app->view->controller->data['id'];
+            $space = $app->repo('Space')->find($id);
+            
+            $years = json_decode($plugin->fvaYearsAvailable());
+            $fvas = [];
+            foreach ($years as $year) {
+                $json = json_decode($space->getMetadata('fva' . $year->year));
+                
+                $fvas[$year->year] = 0;
+                if($json != null){
+                    if($json->visitacao->quantitativo->answer != null)
+                        $fvas[$year->year] = $json->visitacao->quantitativo->answer;
+                }
+            }
+            
+            echo json_encode($fvas);
+            
+            
+            
+            // $spaceFva = $spaceEntity->getMetadata($plugin->getCurrentFva(), true);
+        });
 
         /**
          * Salva o JSON com as respostas
@@ -329,7 +348,7 @@ class Plugin extends \MapasCulturais\Plugin {
         $app = App::i();
 
         //Registra todos os metadados de todos os FVAs realizados
-        $fvas = json_decode($this->fvaYearsAvailable($app),true);
+        $fvas = json_decode($this->fvaYearsAvailable(),true);
         foreach ($fvas as $key => $year) {
             $this->registerSpaceMetadata('fva'.$year['year'], array(
                 'label'   => 'fva'.$year['year'],
@@ -429,7 +448,9 @@ class Plugin extends \MapasCulturais\Plugin {
         return $return;
     }
 
-    private function fvaYearsAvailable($app){
+    private function fvaYearsAvailable(){
+        $app = App::i();
+        
         if($yearsAvailable = $app->repo('SubsiteMeta')->findBy(array('key' => 'yearsAvailable'))){
             $yearsAvailable = json_decode($yearsAvailable[0]->value);
             sort($yearsAvailable);
