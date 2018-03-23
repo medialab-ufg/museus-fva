@@ -142,6 +142,7 @@ class Plugin extends \MapasCulturais\Plugin {
                 }
 
                 $app->view->enqueueScript('app', 'chart.js', '../node_modules/chart.js/dist/Chart.min.js');
+                $app->view->enqueueScript('app', 'chartjs-plugin-datalabels', '../node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js');
                 $app->view->enqueueScript('app', 'angular-ui-mask', '../node_modules/angular-ui-mask/dist/mask.js');
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
                 $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
@@ -313,7 +314,6 @@ class Plugin extends \MapasCulturais\Plugin {
      * @return bool
      */
     private function checkCurrentFva($spaceEntity){
-        $ano = \date('Y');
         $fvaCorrente = $this->getCurrentFva();
 
         if(array_key_exists($fvaCorrente, $spaceEntity->metadata)){
