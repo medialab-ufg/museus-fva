@@ -52,7 +52,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
     						},                    
                             formatter: function(value, context) {
     							var i = context.dataIndex;
-    							var prev = context.dataset.data[i - 1] == 0 ? 500 : context.dataset.data[i - 1];
+    							var prev = context.dataset.data[i - 1] == 0 ? 1 : context.dataset.data[i - 1];
     							var diff = prev !== undefined ? prev - value : 0;
     							var glyph = diff < 0 ? '\u25B2' : diff > 0 ? '\u25BC' : '\u25C6';
                                 return glyph + ' ' + Math.round(((value*100)/prev)-100) + '%';
@@ -104,6 +104,9 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
         function errorCallback(){
             MapasCulturais.Messages.error('Houve um erro no servidor. Tente enviar novamente dentro de alguns minutos.');
         });
+    
+        $scope.respostasFva = JSON.parse(MapasCulturais.respostasFva);
+        // console.log($scope.repostaFvaSelect);
         
         $state.go('comparativo');
         
@@ -388,7 +391,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .service('saveFvaQuestions', ['$http', 'fvaQuestions', function($http, fvaQuestions){
     this.save = function(){
-        $http.post(MapasCulturais.createUrl('space', 'fvaSave', [MapasCulturais.entity.id]), angular.toJson(fvaQuestions),{headers:'Content-Type: text/html; charset=utf-8'}).then(function successCallback(response){
+        $http.post(MapasCulturais.createUrl('space', 'fvaSave', [MapasCulturais.entity.id]), angular.toJson(fvaQuestions)).then(function successCallback(response){
             MapasCulturais.Messages.success('Formulário enviado com sucesso!');
         },
         function errorCallback(){

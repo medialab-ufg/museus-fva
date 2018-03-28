@@ -129,7 +129,25 @@ class Plugin extends \MapasCulturais\Plugin {
 
         $app->hook('mapasculturais.head', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
+            
+            //Recupera todas json com resposta dos FVA's do espaço e joga no objeto globbal MapasCulturais.respostasFva
+            if(!is_null($spaceEntity)){
+                $years = json_decode($plugin->fvaYearsAvailable());
+                $fvas  = [];
+                foreach ($years as $year) {
+                    $json = json_decode($spaceEntity->getMetadata('fva' . $year->year));
+                    
+                    if($json != null){
+                            $fvas[] = array(
+                                'ano'       => $year->year,
+                                'respostas' => $json
+                            );
+                    }
+                }
 
+                $app->view->jsObject['respostasFva'] = json_encode($fvas);
+            }
+            
             /**
             * Checa se o questionário corrente já foi respondido. Caso sim, ele é adicionado na chave 'respondido' e depois é acessado
             * no javascript via objeto global MapasCulturais (MapasCulturais.respondido)
@@ -147,7 +165,7 @@ class Plugin extends \MapasCulturais\Plugin {
                 $app->view->enqueueScript('app', 'angular-ui-router', '../node_modules/@uirouter/angularjs/release/angular-ui-router.js');
                 $app->view->enqueueScript('app', 'angular-input-masks', '../node_modules/angular-input-masks/releases/angular-input-masks-standalone.js');
                 $app->view->enqueueScript('app', 'ng.fva', '../src/questionario/ng.fva.js');
-                $app->view->enqueueStyle('app', 'fva.css', '../src/questionario/fva.questionario.css');
+                $app->view->enqueueStyle ('app', 'fva.css', '../src/questionario/fva.questionario.css');
 
                 $app->view->jsObject['angularAppDependencies'][] = 'ng.fva';
             }
@@ -251,11 +269,11 @@ class Plugin extends \MapasCulturais\Plugin {
         });
         
         $app->hook('GET(panel.fvaAnalyticsSpace)', function () use ($app, $plugin){
-            $id = $app->view->controller->data['id'];
+            $id    = $app->view->controller->data['id'];
             $space = $app->repo('Space')->find($id);
             
             $years = json_decode($plugin->fvaYearsAvailable());
-            $fvas = [];
+            $fvas  = [];
             foreach ($years as $year) {
                 $json = json_decode($space->getMetadata('fva' . $year->year));
                 
@@ -267,10 +285,6 @@ class Plugin extends \MapasCulturais\Plugin {
             }
             
             echo json_encode($fvas);
-            
-            
-            
-            // $spaceFva = $spaceEntity->getMetadata($plugin->getCurrentFva(), true);
         });
 
         /**
@@ -284,14 +298,15 @@ class Plugin extends \MapasCulturais\Plugin {
                 return false;
 
             $fvaAnswersJson = file_get_contents('php://input');
-
-            //Decodifica UTF-8, insere o timestamp e transforma novamente em json
-            $fvaAnswersJson = json_decode(utf8_encode($fvaAnswersJson));
-            $fvaAnswersJson->date = time();
-            $fvaAnswersJson = utf8_decode(json_encode($fvaAnswersJson));
+            
+            date_default_timezone_set('America/Sao_Paulo');
+            
+            $fva = substr($fvaAnswersJson,0,-1);
+            $fva .= ',"date":' . time() . '}';
+            // \dump(utf8_encode($fva));die; 
 
             $currentFva = $plugin->getCurrentFva();
-            $spaceEntity->{$currentFva} = $fvaAnswersJson;
+            $spaceEntity->{$currentFva} = $fva;
             $spaceEntity->save(true);
         });
 

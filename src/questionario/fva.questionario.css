@@ -12,6 +12,14 @@ li {
     background: #e8eff2;
 }
 
+#respostas-fva td{
+    text-align: left;
+}
+
+#respostas-fva tr.item-title td{
+    text-align: center;
+}
+
 .pergunta-fva{
     text-align: left;
 }
