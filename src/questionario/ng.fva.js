@@ -109,11 +109,6 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
         // console.log($scope.repostaFvaSelect);
         
         $state.go('comparativo');
-        
-        /*$scope.$root.respostas = angular.fromJson(MapasCulturais.respondido);
-        $scope.respostas = fvaQuestions;
-
-        $state.go('revisao');*/
     }
     else{
         $scope.ano = $('#fva-form').data('fvaopenyear');

@@ -154,9 +154,15 @@ class Plugin extends \MapasCulturais\Plugin {
             */
             if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
-
-                if(!empty($questionarioRespondido)){
-                    $app->view->jsObject['respondido'] = $questionarioRespondido;
+                
+                $currentFva = $this->getCurrentFva();
+                
+                if($currentFva != '[]'){
+                    if(array_key_exists($currentFva, $spaceEntity->metadata)){
+                        $app->view->jsObject['respondido'] = true;
+                    }
+                }else{
+                    $app->view->jsObject['respondido'] = true;
                 }
 
                 $app->view->enqueueScript('app', 'chart.js', '../node_modules/chart.js/dist/Chart.min.js');
@@ -303,7 +309,6 @@ class Plugin extends \MapasCulturais\Plugin {
             
             $fva = substr($fvaAnswersJson,0,-1);
             $fva .= ',"date":' . time() . '}';
-            // \dump(utf8_encode($fva));die; 
 
             $currentFva = $plugin->getCurrentFva();
             $spaceEntity->{$currentFva} = $fva;
@@ -350,7 +355,7 @@ class Plugin extends \MapasCulturais\Plugin {
         $subsite = $app->getCurrentSubsite();
 
         $fvaOpen = 'fva' . $subsite->getMetadata('fvaOpen');
-        $currentFva = (empty($fvaOpen)) ? json_encode(array()) : $fvaOpen;
+        $currentFva = (empty($fvaOpen) || $fvaOpen == 'fva') ? json_encode(array()) : $fvaOpen;
 
         return $currentFva;
     }
