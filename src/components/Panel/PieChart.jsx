@@ -49,6 +49,23 @@ export default class PieChart extends React.Component {
                         return'%';
                     }
                 }
+            },
+            plugins: {
+                datalabels: {
+                    color: 'white',
+                    display: function(context) {
+                        let dataset = context.dataset;
+                        let count = dataset.data.length;
+                        let value = dataset.data[context.dataIndex];
+                        return value > count * 1.5;
+                    },
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                        return Math.round(value) + '%';
+                    },
+                }
             }
         };
 

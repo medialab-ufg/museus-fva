@@ -2,6 +2,7 @@
 import React from'react';
 import{Line} from'react-chartjs-2';
 import _ from'lodash';
+import'chartjs-plugin-datalabels';
 
 export default class ComparativeChart extends React.Component {
 
@@ -57,12 +58,45 @@ export default class ComparativeChart extends React.Component {
                 }
             ]
         };
+        
+        const options = {
+            plugins: {
+                datalabels: {
+                    backgroundColor:'rgba(255, 165,165, 0.9)',
+                    borderRadius: 4,
+                    color: function(context) {
+                        let i = context.dataIndex;
+                        let value = context.dataset.data[i];
+                        let prev = context.dataset.data[i - 1];
+                        let diff = prev !== undefined ? value - prev : 0;
+                        return diff < 0 ? 'red' :
+                            diff > 0 ? 'green' :
+                                'gray';
+                    },
+                    font: {
+                        weight: 'bold'
+                    },                    
+                    formatter: function(value, context) {
+                        let i = context.dataIndex;
+                        let prev = context.dataset.data[i - 1] === 0 ? 1 : context.dataset.data[i - 1];
+                        let diff = prev !== undefined ? prev - value : 0;
+                        let glyph = diff < 0 ? '\u25B2' : diff > 0 ? '\u25BC' : '\u25C6';
+                        return glyph + ' ' + Math.round(((value*100)/prev)-100) + '%';
+                    },
+                    display: function(context) {
+                        if(context.dataset.data[context.dataIndex] === 0 || context.dataIndex === 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        };
     
     
         return(
             <div id="chart-years">
                 <h2>Respostas x Anos</h2>
-                <Line data={data} width={50} height={20}/>
+                <Line data={data} width={50} height={20} options={options}/>
             </div>
         );
     }

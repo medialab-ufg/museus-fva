@@ -12,7 +12,7 @@
             </select>
         </header>
                 
-        <table id="respostas-fva" style="width:100%;">
+        <table id="respostas-fva" style="width:100%;" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente">
             <tbody>
                 <tr class="item-title" ng-if="repostaFvaSelect.respostas.introducao.primeiraParticipacaoFVA.answer">
                     <td colspan="3"><span class="section-header">INTRODUÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="intro"></a></td>
@@ -114,6 +114,6 @@
 
             </tbody>
         </table>
-        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()">
+        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente">
     </div>
 </div>

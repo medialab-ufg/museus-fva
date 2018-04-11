@@ -58,7 +58,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                                 return glyph + ' ' + Math.round(((value*100)/prev)-100) + '%';
     						},
                             display: function(context) {
-                                if(context.dataset.data[context.dataIndex] == 0)
+                                if(context.dataset.data[context.dataIndex] == 0 || context.dataIndex == 0)
                                     return false;
                             }
     					}
