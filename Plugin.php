@@ -48,6 +48,9 @@ class Plugin extends \MapasCulturais\Plugin {
             }
 
             $subsite->save(true);
+            
+            $lineDebug = (empty($newFva)) ? 'CLOSED' : 'OPEN ' . $newFva;
+            $app->log->debug("FVA >> \033[32m$lineDebug\033[0m\n");
         });
 
         //Se o FVA estiver aberto, retorna o ano
@@ -91,18 +94,31 @@ class Plugin extends \MapasCulturais\Plugin {
 
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app, $plugin){
-            $spaceEntity = $app->view->controller->requestedEntity;
-
-            if ($spaceEntity->canUser('@control') && !empty($plugin->getCurrentFva()))
+            if ($plugin->getCurrentFva() != '[]')
                 $this->part('fva-tab');
         });
 
         //Insere o form do FVA
-        $app->hook('template(space.single.tabs-content):end', function() use($app,$plugin){
+        $app->hook('template(space.single.tabs-content):end', function() use($app, $plugin){
             $spaceEntity = $app->view->controller->requestedEntity;
+            $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
 
-            if ($spaceEntity->canUser('@control') && !empty($plugin->getCurrentFva()))
-                $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);
+            if($plugin->getCurrentFvaYear()){
+                if ($spaceEntity->canUser('@control') || empty($questionarioRespondido)) {
+                    $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);                
+                } else {
+                    echo '<div id="fva-form" class="aba-content">
+                        <div class="alert info">
+                            
+                        PARABÉNS! O FVA ' . $plugin->getCurrentFvaYear() . ' deste Museu já foi preenchido.
+                        <br /><br />
+                        O Ibram agradece a contribuição no levantamento de informações sobre o campo museal.
+                        <br /><br />
+                        Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br ou pelos telefones (61) 3521-4410, (61) 3521-4291, (61) 3521-4330, (61) 3521-4329, (61) 3521-4292
+                        </div>
+                        </div>';
+                }
+            }
         });
 
         //Painel do Admin FVA
@@ -152,7 +168,7 @@ class Plugin extends \MapasCulturais\Plugin {
             * Checa se o questionário corrente já foi respondido. Caso sim, ele é adicionado na chave 'respondido' e depois é acessado
             * no javascript via objeto global MapasCulturais (MapasCulturais.respondido)
             */
-            if($spaceEntity && $spaceEntity->getEntityType() == 'Space' && $spaceEntity->canUser('@control')){
+            if($spaceEntity && $spaceEntity->getEntityType() == 'Space'){
                 $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
                 
                 $currentFva = $this->getCurrentFva();
@@ -296,23 +312,24 @@ class Plugin extends \MapasCulturais\Plugin {
         /**
          * Salva o JSON com as respostas
          */
-        $app->hook('POST(space.fvaSave)', function () use($app, $plugin){
-            $this->requireAuthentication();
+        $app->hook('POST(space.fvaSave)', function () use($app, $plugin){        
             $spaceEntity = $app->view->controller->requestedEntity;
-
-            if (!$spaceEntity->canUser('@control'))
-                return false;
-
             $fvaAnswersJson = file_get_contents('php://input');
             
-            date_default_timezone_set('America/Sao_Paulo');
-            
+            // Adiciona a data atual (timestamp) ao json
             $fva = substr($fvaAnswersJson,0,-1);
             $fva .= ',"date":' . time() . '}';
-
+            
             $currentFva = $plugin->getCurrentFva();
-            $spaceEntity->{$currentFva} = $fva;
-            $spaceEntity->save(true);
+            
+            // Libera o registro do FVA para acessos não autorizados
+            $app->disableAccessControl();
+                $fvaMeta = new Entities\SpaceMeta();
+                $fvaMeta->key = $currentFva;
+                $fvaMeta->owner = $spaceEntity;
+                $fvaMeta->value = $fva;
+                $fvaMeta->save(true);
+            $app->enableAccessControl();
         });
 
         //Apaga o FVA do museu do id fornecido
