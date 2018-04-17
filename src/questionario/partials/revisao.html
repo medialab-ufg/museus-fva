@@ -1,7 +1,4 @@
 <div id="fva-revisao">
-    <div id="print-button" ng-if="!showReviewAlert">
-        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()">
-    </div>
     <div id="dados-revisao">
         <div ng-if="showReviewAlert">
             <p class="confirmacao" colspan="2">
@@ -11,104 +8,126 @@
             </p>
         </div>
 
-        <table id="respostas-fva">
+        
+        <table id="respostas-fva" style="width:100%;">        
             <tbody>
                 <tr class="item-title">
-                    <td colspan="2"><span class="section-header">INTRODUÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="intro"></a></td>
+                    <td colspan="3"><span class="section-header">INTRODUÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="intro"></a></td>
                 </tr>
+                
                 <tr>
-                    <td colspan="2">
+
+                    <td colspan="3">
                         <p>Para efeito deste Formulário, deverá ser considerada VISITAÇÃO / VISITA todo usuário das atividades/áreas/ações desenvolvidas pelo Museu
                         ou em seu complexo que tenham relação com a equipe, o acervo, os trabalhos, os projetos e as iniciativas do Museu.</p>
                     </td>
-                </tr>
-                <tr>
-                    <td class="pergunta-fva">
-                        <p>{{respostasFVA.introducao.primeiraParticipacaoFVA.label}}</p>
-                    </td>
-                    <td class="resposta-fva">
-                        {{respostasFVA.introducao.primeiraParticipacaoFVA.answer === true ? 'Sim' : 'Não'}}
-                    </td>
-                </tr>
+                </tr>        
+                
                 <tr ng-if="respostasFVA.introducao.primeiraParticipacaoFVA.answer">
-                    <td colspan="2">
-                        <p>{{respostasFVA.introducao.questionarioNaoParticipou.label}}</p>
+                    <td colspan="3">
+                        <strong>Motivos por não participação no FVA anterior:</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in respostasFVA.introducao.questionarioNaoParticipou.motivos">
+                            {{item.label}},
+                        </span>
+                        {{respostasFVA.introducao.questionarioNaoParticipouOutros.answer === true ? respostasFVA.introducao.questionarioNaoParticipouOutros.text : ''}}
                     </td>
                 </tr>
-                <!-- Questionário pra quem participou -->
-                <tr ng-if="respostasFVA.introducao.primeiraParticipacaoFVA.answer" ng-repeat="item in respostasFVA.introducao.questionarioNaoParticipou.motivos">
-                    <td class="pergunta-fva">{{item.label}}</td>
-                    <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
-                </tr>
-                <tr ng-if="respostasFVA.introducao.primeiraParticipacaoFVA.answer">
-                    <td class="pergunta-fva">Outros</td>
-                    <td class="resposta-fva" ng-if="respostasFVA.introducao.questionarioNaoParticipouOutros.answer">{{respostasFVA.introducao.questionarioNaoParticipouOutros.text}}</td>
-                </tr>
+                
+                
                 <tr class="item-title">
-                    <td colspan="2"><span class="section-header">DADOS DO RESPONSÁVEL PELO PREENCHIMENTO DO FORMULÁRIO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="responsavel"></a></td>
-                </tr>
-                <tr>
-                    <td class="pergunta-fva">{{respostasFVA.responsavel.nome.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.responsavel.nome.answer}}</td>
-                </tr>
-                <tr>
-                    <td class="pergunta-fva">{{respostasFVA.responsavel.telefone.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.responsavel.telefone.answer}}</td>
-                </tr>
-                <tr>
-                    <td class="pergunta-fva">{{respostasFVA.responsavel.email.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.responsavel.email.answer}}</td>
-                </tr>
-                <tr class="item-title">
-                    <td colspan="2"><span class="section-header">DADOS SOBRE VISITAÇÃO ATUAL</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="visitacao"></a></td></tr>
-                <tr>
-                    <td class="pergunta-fva">{{respostasFVA.visitacao.realizaContagem.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.visitacao.realizaContagem.answer === true ? 'Sim' : 'Não'}}</td>
-                </tr>
-                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer">
-                    <td colspan="2">Qual(is) a(s) técnica(s) de contagem de público utilizada(s)?</td>
-                <tr>
 
-                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer" ng-repeat="item in respostasFVA.visitacao.tecnicaContagem">
-                    <td class="pergunta-fva">{{item.label}}</td>
-                    <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
-                </tr>
-                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer">
-                    <td class="pergunta-fva">Outros</td>
-                    <td class="resposta-fva">{{respostasFVA.visitacao.tecnicaContagemOutros.text}}</td>
-                </tr>
-                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer">
-                    <td class="pergunta-fva">{{respostasFVA.visitacao.quantitativo.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.visitacao.quantitativo.answer}}</td>
-                </tr>
-                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer">
-                    <td class="pergunta-fva">{{respostasFVA.visitacao.justificativaBaixaVisitacao.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.visitacao.justificativaBaixaVisitacao.answer}}</td>
+                    <td colspan="3"><span class="section-header">DADOS DO RESPONSÁVEL PELO PREENCHIMENTO DO FORMULÁRIO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="responsavel"></a></td>
                 </tr>
                 <tr>
-                    <td class="pergunta-fva">{{respostasFVA.visitacao.observacoes.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.visitacao.observacoes.answer}}</td>
+                    <td>
+                        <strong>{{respostasFVA.responsavel.nome.label}}</strong><br>
+                        {{respostasFVA.responsavel.nome.answer}}
+                    </td>
+
+                    <td>
+                        <strong>Telefone</strong><br>
+                        {{respostasFVA.responsavel.telefone.answer}}
+                    </td>
+                    
+                    <td>
+                        <strong>E-mail</strong><br>
+                        {{respostasFVA.responsavel.email.answer}}
+                    </td>
                 </tr>
+
                 <tr class="item-title">
-                    <td colspan="2"><span class="section-header">AVALIAÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="avaliacao"></a></td>
+
+                    <td colspan="3"><span class="section-header">DADOS SOBRE VISITAÇÃO ATUAL</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="visitacao"></a></td>
                 </tr>
+                
                 <tr>
-                    <td colspan="2">Indique o(s) meio(s) pelo(s) qual(is) soube do FVA</td>
-                <tr>
-                <tr ng-repeat="item in respostasFVA.avaliacao.midias">
-                    <td class="pergunta-fva">{{item.label}}</td>
-                    <td class="resposta-fva">{{item.answer === true ? 'Sim' : ''}}</td>
+                    <td>
+                        <strong>{{respostasFVA.visitacao.realizaContagem.label}}</strong><br>
+                        {{respostasFVA.visitacao.realizaContagem.answer === true ? 'Sim' : 'Não'}}
+                    </td>
+                    <td colspan="2" ng-if="respostasFVA.visitacao.realizaContagem.answer">
+                        <strong>Técnicas de contagem</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in respostasFVA.visitacao.tecnicaContagem">
+                            {{item.label}},
+                        </span>
+                        {{respostasFVA.visitacao.tecnicaContagemOutros.answer === true ? respostasFVA.visitacao.tecnicaContagemOutros.text : ''}}
+                    </td>
+                    <td colspan="2" ng-if="!respostasFVA.visitacao.realizaContagem.answer"></td>
                 </tr>
-                <tr>
-                    <td class="pergunta-fva">Outros</td>
-                    <td class="resposta-fva">{{respostasFVA.avaliacao.midiasOutros.text}}</td>
+                
+                <tr ng-if="respostasFVA.visitacao.realizaContagem.answer">
+                    <td>
+                        <strong>{{respostasFVA.visitacao.quantitativo.label}}</strong>
+                    </td>
+                    <td colspan="2">
+                        <h6>{{respostasFVA.visitacao.quantitativo.answer}}</h6>
+                    </td>
                 </tr>
-                <tr>
-                    <td class="pergunta-fva">{{respostasFVA.avaliacao.opiniao.label}}</td>
-                    <td class="resposta-fva">{{respostasFVA.avaliacao.opiniao.text}}</td>
+                
+                <tr ng-if="respostasFVA.visitacao.justificativaBaixaVisitacao.answer">
+                    <td colspan="3">
+                        <strong>{{respostasFVA.visitacao.justificativaBaixaVisitacao.label}}</strong><br>
+                        {{respostasFVA.visitacao.justificativaBaixaVisitacao.answer}}
+                    </td>
                 </tr>
+                
+                <tr ng-if="respostasFVA.visitacao.observacoes.answer">
+                    <td colspan="3">
+                        <strong>{{respostasFVA.visitacao.observacoes.label}}</strong><br>
+                        {{respostasFVA.visitacao.observacoes.answer}}
+                    </td>
+                </tr>
+                
+                <tr class="item-title">
+
+                    <td colspan="3"><span class="section-header">AVALIAÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="avaliacao"></a></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3">
+                        <strong>Meio(s) pelo(s) qual(is) soube do FVA</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in respostasFVA.avaliacao.midias">
+                            {{item.label}},
+                        </span>
+                        {{respostasFVA.avaliacao.midiasOutros.answer === true ? respostasFVA.avaliacao.midiasOutros.text : ''}}
+                    </td>
+                </tr>
+                
+                <tr ng-if="respostasFVA.avaliacao.opiniao.text">
+                    <td colspan="3">
+                        <strong>Opinião e comentários sobre o questionário:</strong><br>
+                        {{respostasFVA.avaliacao.opiniao.text}}
+                    </td>
+                </tr>
+
             </tbody>
         </table>
+        
+        <div id="print-button" ng-if="!showReviewAlert">
+            <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()">
+        </div>
+        
+
         <div ng-if="respostasFVA.revisao.showCienteCheckbox" id="ciente-checkbox">
             <div ng-if="showCienteCondicoesAlert">
                 <p class="display-warning" colspan="2">

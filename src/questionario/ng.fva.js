@@ -3,14 +3,115 @@
 angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 //Controller definido em fva-form que faz o roteamento entre um novo questionário ou exibir um questionário já respondido
-.controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', function($scope, $rootScope, $state, fvaQuestions){
+.controller('rootController', ['$scope', '$rootScope', '$state', 'fvaQuestions', '$http', function($scope, $rootScope, $state, fvaQuestions,$http){
     if(MapasCulturais.hasOwnProperty('respondido')){
-        $scope.$root.respostas = angular.fromJson(MapasCulturais.respondido);
-        $scope.respostas = fvaQuestions;
         
-        $state.go('revisao');
+        $http.get(MapasCulturais.createUrl('panel', 'fvaAnalyticsSpace', [MapasCulturais.entity.id])).then(function successCallback(response){
+            var fvaAnalytics = angular.fromJson(response.data);
+                
+            var visitas = [];
+            var years   = [];
+            
+            angular.forEach(fvaAnalytics, function(fva, key) {
+                visitas.push(fva);
+                years.push(key);
+            });
+            
+            var config = {
+    			type: 'line',
+    			data: {
+    				labels: years,
+    				datasets: [{
+    					backgroundColor: 'rgba(255, 165, 165, 0.3)',
+    					borderColor: 'rgba(255, 165, 165, 0.3)',
+    					data: visitas,
+    					fill: true     ,
+                        datalabels: {
+    						align: 'left',
+    						anchor: 'center',
+                            'offset': 10
+    					}
+    				}]
+    			},
+    			options: {
+                    plugins: {
+    					datalabels: {
+                            backgroundColor:'rgba(255, 165,165, 0.7)',
+    						borderRadius: 4,
+    						color: function(context) {
+    							var i = context.dataIndex;
+    							var value = context.dataset.data[i];
+    							var prev = context.dataset.data[i - 1];
+    							var diff = prev !== undefined ? value - prev : 0;
+    							return diff < 0 ? 'red' :
+    								diff > 0 ? 'green' :
+    								'gray';
+    						},
+    						font: {
+    							weight: 'bold'
+    						},                    
+                            formatter: function(value, context) {
+    							var i = context.dataIndex;
+    							var prev = context.dataset.data[i - 1] == 0 ? 1 : context.dataset.data[i - 1];
+    							var diff = prev !== undefined ? prev - value : 0;
+    							var glyph = diff < 0 ? '\u25B2' : diff > 0 ? '\u25BC' : '\u25C6';
+                                return glyph + ' ' + Math.round(((value*100)/prev)-100) + '%';
+    						},
+                            display: function(context) {
+                                if(context.dataset.data[context.dataIndex] == 0 || context.dataIndex == 0)
+                                    return false;
+                            }
+    					}
+    				},
+    				responsive: true,
+    				tooltips: {
+    					mode: 'index',
+    					intersect: false,
+    				},
+    				hover: {
+    					mode: 'nearest',
+    					intersect: true
+    				},
+    				scales: {
+    					xAxes: [{
+    						display: true,
+    						scaleLabel: {
+    							display: true,
+    							labelString: 'Anos'
+    						}
+    					}],
+    					yAxes: [{
+    						display: true,
+    						scaleLabel: {
+    							display: true,
+    							labelString: 'Visitantes'
+    						}
+    					}]
+    				},
+                    legend: {
+                        display: false
+                    },
+                    layout: {
+                        padding: {
+                            top:12                                                                                                                                                                                                                                                                                                                                   
+                        }
+                    }
+    			}
+    		};
+            
+            var myLineChart = new Chart($('#chartFvaVisitas'), config );
+        },
+        function errorCallback(){
+            MapasCulturais.Messages.error('Houve um erro no servidor. Tente enviar novamente dentro de alguns minutos.');
+        });
+    
+        $scope.respostasFva = JSON.parse(MapasCulturais.respostasFva);
+        // console.log($scope.repostaFvaSelect);
+        
+        $state.go('comparativo');
     }
     else{
+        $scope.ano = $('#fva-form').data('fvaopenyear');
         $state.go('index');
     }
 }])
@@ -21,10 +122,14 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
     }
 }])
 
+.controller('comparativoCtrl', ['$scope', '$state', function($scope, $state){
+    
+}])
+
 .controller('termoCompromissoCtrl', ['$scope', '$state', 'fvaQuestions', function ($scope, $state, fvaQuestions) {
     $scope.condicao = fvaQuestions.termosCompromisso;
     $scope.displayAlertaTermoCompromisso = false;
-    
+
     $scope.validateTermos = function () {
         if ($scope.condicao.ciente) {
             $state.go('intro');
@@ -37,7 +142,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('introCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosIntro = fvaQuestions.introducao;
-    
+
     //Checa se não foi deixado resposta em branco e exibe a respectiva mensagem de alerta caso a resposta seja 'sim'
     function validateIntro() {
         var isValid = false;
@@ -98,7 +203,7 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
             return false;
         }
     };
-    
+
     $scope.nextPage = function() {
         if(validateResponsavel()){
             $state.go('visitacao');
@@ -108,14 +213,14 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('visitacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', function ($scope, $state, fvaQuestions, questionValidatorService) {
     $scope.dadosVisitacao = fvaQuestions.visitacao;
-    
+
     function validateVisitacao() {
         if ($scope.dadosVisitacao.realizaContagem.answer) {
             var isContagemValid = questionValidatorService.multiplaEscolha($scope.dadosVisitacao.tecnicaContagem, $scope.dadosVisitacao.tecnicaContagemOutros);
             $scope.displayTecnicaContagemWarning = !isContagemValid;
             var isTotalVisitasValid = $scope.dadosVisitacao.quantitativo.answer === null ? false : true;
             $scope.displayTotalVisitasWarning = !isTotalVisitasValid;
-            
+
             if (isContagemValid && isTotalVisitasValid) {
                 return true;
             }
@@ -139,14 +244,14 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
 
 .controller('avaliacaoCtrl', ['$scope', '$state', 'fvaQuestions', 'questionValidatorService', 'saveFvaQuestions', function ($scope, $state, fvaQuestions, questionValidatorService, saveFvaQuestions) {
     $scope.dadosAvaliacao = fvaQuestions.avaliacao;
-    
+
     function validateAvaliacao() {
         var isValid = questionValidatorService.multiplaEscolha($scope.dadosAvaliacao.midias, $scope.dadosAvaliacao.midiasOutros);
         $scope.displayMidiaWarning = !isValid;
-        
+
         return isValid;
     }
-    
+
     $scope.nextPage = function(){
         if(validateAvaliacao()){
             $state.go('revisao');
@@ -235,13 +340,20 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                 $(document).scrollTop(window.innerHeight/2)
             }
         })
+        .state('comparativo', {
+            controller: 'comparativoCtrl',
+            templateUrl: pluginTemplatePath + '/comparativo.html',
+            onEnter: function(){
+                $(document).scrollTop(window.innerHeight/2)
+            }
+        })
 }])
 
 .service('questionValidatorService', function () {
     //valida se pelo menos uma opçao da multipla escolha foi selecionado
     this.multiplaEscolha = function (questionario, outros) {
         var isValid = false;
-        
+
         Object.keys(questionario).forEach(function(k) {
             if(questionario[k].answer === true) {
                 isValid = true;
@@ -383,11 +495,11 @@ angular.module("ng.fva", ['ui.router', 'ui.mask', 'ui.utils.masks'])
                 text: null
             },
             quantitativo: {
-                label: 'Quantitativo total de visitações/visitas no ano referência (2017)',
+                label: 'Quantitativo total de visitações/visitas no ano referência (' + $('#fva-form').data('fvaopenyear') + ')',
                 answer: null
             },
             observacoes: {
-                label: 'Observações sobre a visitação no ano de referência (2017):',
+                label: 'Observações sobre a visitação no ano de referência (' + $('#fva-form').data('fvaopenyear') + '):',
                 answer: null
             }
         },
