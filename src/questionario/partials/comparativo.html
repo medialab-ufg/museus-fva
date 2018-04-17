@@ -1,0 +1,119 @@
+<div id="fva-nota">
+    <h3>Evolução das visitas em anos</h3>
+    
+    <canvas id="chartFvaVisitas" width="400" height="110"></canvas>
+        
+    <div class="servico">        
+        <header class="entinty-calendar-header clearfix">
+            <h6 style="float:left;margin:3px 0 0;">Respostas dos Questionários</h6>
+
+            <select ng-model="repostaFvaSelect" ng-options="fva.ano for fva in respostasFva" style="float:right;margin:0;">
+                <option value="">Selecionar o ano</option>
+            </select>
+        </header>
+                
+        <table id="respostas-fva" style="width:100%;" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente">
+            <tbody>
+                <tr class="item-title" ng-if="repostaFvaSelect.respostas.introducao.primeiraParticipacaoFVA.answer">
+                    <td colspan="3"><span class="section-header">INTRODUÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="intro"></a></td>
+                </tr>            
+                
+                <tr ng-if="repostaFvaSelect.respostas.introducao.primeiraParticipacaoFVA.answer">
+                    <td colspan="3">
+                        <strong>Motivos por não participação no FVA anterior:</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in repostaFvaSelect.respostas.introducao.questionarioNaoParticipou.motivos">
+                            {{item.label}},
+                        </span>
+                        {{repostaFvaSelect.respostas.introducao.questionarioNaoParticipouOutros.answer === true ? repostaFvaSelect.respostas.introducao.questionarioNaoParticipouOutros.text : ''}}
+                    </td>
+                </tr>
+                
+                
+                <tr class="item-title">
+                    <td colspan="3"><span class="section-header">DADOS DO RESPONSÁVEL PELO PREENCHIMENTO DO FORMULÁRIO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="responsavel"></a></td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>{{repostaFvaSelect.respostas.responsavel.nome.label}}</strong><br>
+                        {{repostaFvaSelect.respostas.responsavel.nome.answer}}
+                    </td>
+
+                    <td>
+                        <strong>Telefone</strong><br>
+                        {{repostaFvaSelect.respostas.responsavel.telefone.answer}}
+                    </td>
+                    
+                    <td>
+                        <strong>E-mail</strong><br>
+                        {{repostaFvaSelect.respostas.responsavel.email.answer}}
+                    </td>
+                </tr>
+
+                <tr class="item-title">
+                    <td colspan="3"><span class="section-header">DADOS SOBRE VISITAÇÃO ATUAL</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="visitacao"></a></td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <strong>{{repostaFvaSelect.respostas.visitacao.realizaContagem.label}}</strong><br>
+                        {{repostaFvaSelect.respostas.visitacao.realizaContagem.answer === true ? 'Sim' : 'Não'}}
+                    </td>
+                    <td colspan="2" ng-if="repostaFvaSelect.respostas.visitacao.realizaContagem.answer">
+                        <strong>Técnicas de contagem</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in repostaFvaSelect.respostas.visitacao.tecnicaContagem">
+                            {{item.label}},
+                        </span>
+                        {{repostaFvaSelect.respostas.visitacao.tecnicaContagemOutros.answer === true ? repostaFvaSelect.respostas.visitacao.tecnicaContagemOutros.text : ''}}
+                    </td>
+                    <td colspan="2" ng-if="!repostaFvaSelect.respostas.visitacao.realizaContagem.answer"></td>
+                </tr>
+                
+                <tr ng-if="repostaFvaSelect.respostas.visitacao.realizaContagem.answer">
+                    <td>
+                        <strong>{{repostaFvaSelect.respostas.visitacao.quantitativo.label}}</strong>
+                    </td>
+                    <td colspan="2">
+                        <h6>{{repostaFvaSelect.respostas.visitacao.quantitativo.answer}}</h6>
+                    </td>
+                </tr>
+                
+                <tr ng-if="repostaFvaSelect.respostas.visitacao.justificativaBaixaVisitacao.answer">
+                    <td colspan="3">
+                        <strong>{{repostaFvaSelect.respostas.visitacao.justificativaBaixaVisitacao.label}}</strong><br>
+                        {{repostaFvaSelect.respostas.visitacao.justificativaBaixaVisitacao.answer}}
+                    </td>
+                </tr>
+                
+                <tr ng-if="repostaFvaSelect.respostas.visitacao.observacoes.answer">
+                    <td colspan="3">
+                        <strong>{{repostaFvaSelect.respostas.visitacao.observacoes.label}}</strong><br>
+                        {{repostaFvaSelect.respostas.visitacao.observacoes.answer}}
+                    </td>
+                </tr>
+                
+                <tr class="item-title">
+                    <td colspan="3"><span class="section-header">AVALIAÇÃO</span><a class="edit" ng-if="showReviewAlert" href="#" ui-sref="avaliacao"></a></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3">
+                        <strong>Meio(s) pelo(s) qual(is) soube do FVA</strong><br>
+                        <span ng-if="item.answer" ng-repeat="item in repostaFvaSelect.respostas.avaliacao.midias">
+                            {{item.label}},
+                        </span>
+                        {{repostaFvaSelect.respostas.avaliacao.midiasOutros.answer === true ? repostaFvaSelect.respostas.avaliacao.midiasOutros.text : ''}}
+                    </td>
+                </tr>
+                
+                <tr ng-if="repostaFvaSelect.respostas.avaliacao.opiniao.text">
+                    <td colspan="3">
+                        <strong>Opinião e comentários sobre o questionário:</strong><br>
+                        {{repostaFvaSelect.respostas.avaliacao.opiniao.text}}
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente">
+    </div>
+</div>

@@ -1,0 +1,132 @@
+#toobar-fva{
+    height: 60px;
+}
+
+#toobar-fva #fva-toogleopen{
+    float: left;
+}
+
+#toobar-fva #fva-selectyear{
+    float: right;
+}
+
+#panel-container h2, #loading{
+    text-align: center;
+}
+
+#chart-years h2{
+    text-align: center;
+    padding-top: 20px;
+}
+
+#chart-container {
+    margin-bottom: 50px;
+}
+.count-nao-responderam {
+    float: right;
+}
+.count-responderam{
+    float: left;
+}
+.teste {
+    position: relative;
+}
+
+.count-responderam .count-number,
+.count-nao-responderam .count-number {
+    text-align: center;
+    font-weight: bold;
+    font-size: 34px;
+}
+
+.count-nao-responderam p,
+.count-responderam p {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.fva-table {
+    font-size: 12px;
+    line-height: 10px;
+}
+
+.rt-resizable-header-content {
+    font-weight: bold;
+}
+
+.-pagination .-previous,
+.-pagination .-next, {
+    flex: none;
+    width: 20%;
+}
+
+.-pagination .-center {
+    width: 60%;
+    flex: none;
+}
+
+
+.ReactTable .-pagination .-pageJump input {
+    width: 40px;
+    padding: 0;
+}
+
+.ReactTable .-pagination input, .ReactTable .-pagination select {
+    margin: 0;
+    height: 25px;
+    padding: 0;
+}
+
+.ReactTable .rt-td{
+    line-height: 20px;
+}
+
+.header-count {
+    padding-bottom: 100px;
+}
+
+
+#btn-generate-report {
+    margin-top: 15px;
+}
+
+.input-filter {
+    width: 100%;
+}
+
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid #333;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #333 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

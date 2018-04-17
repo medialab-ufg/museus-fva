@@ -22,6 +22,17 @@ Feito isto, configure seu config.php:
 ],
 
 ```
-## Desenvolvimento
-O plugin contém testes unitários para os controllers do Angular. 
+## Instalação e Desenvolvimento
+
+Este plugin contem dependências de bibliotecas PHP (instaladas via composer) e Javscript (instaladas via npm).
+
+Para concluir a instalação é preciso instalar as dependências e fazer o build da aplicação em React.
+
+```
+composer install
+npm install
+npm run-script build
+```
+
+O plugin contém também testes unitários para os controllers do Angular. 
 Na pasta do plugin execute o comando `npm test` para começar a rodar os testes.
