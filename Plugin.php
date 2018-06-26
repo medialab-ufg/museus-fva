@@ -401,10 +401,7 @@ class Plugin extends \MapasCulturais\Plugin {
             'MapasCulturais\Entities\Subsite' => [
                 'fvaOpen' => [
                     'label'       => 'Formulário de Visitação Anual',
-                    'private'     => true,
-                    'validations' => [
-                        'v::leapYear()' => 'O valor deve ser um ano com 4 dígitos'
-                    ]
+                    'private'     => true
                 ],
                 'yearsAvailable' => [
                     'label'   => 'FVAs disponíveis de anos já realizados',

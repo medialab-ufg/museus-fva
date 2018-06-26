@@ -1,6 +1,6 @@
 {
   "name": "FVA",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "Plugin para aplicação do Formulário de Visitação Anual pelo IBRAM",
   "main": "ng.fva.js",
   "scripts": {
@@ -8,7 +8,10 @@
     "start": "webpack-dev-server"
   },
   "keywords": [],
-  "author": "Ari Mourão",
+  "contributors": [
+    "Asafe Ramos <asafe@asaferamos.com>",
+    "Ari Mourão"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@uirouter/angularjs": "^1.0.6",
@@ -47,10 +50,10 @@
     "karma-chrome-launcher": "^2.2.0",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
-    "react": "^15.6.2",
+    "react": "16.2.x",
     "react-chartjs-2": "^2.6.4",
     "react-confirm-alert": "^1.0.8",
-    "react-dom": "^15.6.2",
+    "react-dom": "16.2.x",
     "react-super-select": "^1.0.9",
     "react-table": "^6.6.0",
     "react-toggle-button": "^2.2.0"
