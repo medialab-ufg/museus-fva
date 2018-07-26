@@ -95,8 +95,12 @@ class Plugin extends \MapasCulturais\Plugin {
 
         //Insere a aba FVA com o questionário no tema
         $app->hook('template(space.single.tabs):end', function() use($app, $plugin){
-            if ($plugin->getCurrentFva() != '[]')
-                $this->part('fva-tab');
+            $spaceEntity = $app->view->controller->requestedEntity;
+
+            if($plugin->getCurrentFva() == '[]' && !$spaceEntity->canUser('@control'))
+                return false;
+
+            $this->part('fva-tab');
         });
 
         //Insere o form do FVA
@@ -104,20 +108,29 @@ class Plugin extends \MapasCulturais\Plugin {
             $spaceEntity = $app->view->controller->requestedEntity;
             $questionarioRespondido = $plugin->checkCurrentFva($spaceEntity);
 
-            if($plugin->getCurrentFvaYear()){
-                if ($spaceEntity->canUser('@control') || empty($questionarioRespondido)) {
-                    $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);                
-                } else {
-                    echo '<div id="fva-form" class="aba-content">
-                        <div class="alert info">
-                            
-                        PARABÉNS! O FVA ' . $plugin->getCurrentFvaYear() . ' deste Museu já foi preenchido.
-                        <br /><br />
-                        O Ibram agradece a contribuição no levantamento de informações sobre o campo museal.
-                        <br /><br />
-                        Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br ou pelos telefones (61) 3521-4410, (61) 3521-4291, (61) 3521-4330, (61) 3521-4329, (61) 3521-4292
-                        </div>
-                        </div>';
+            // Testa se o FVA está aberto
+            if($plugin->getCurrentFva() != '[]'){
+                // Se não respondido, libera para resposta
+                if(empty($questionarioRespondido)){
+                    $this->part('fva-form',['fvaOpenYear' => $plugin->getCurrentFvaYear()]);
+                }else{
+                    if($spaceEntity->canUser('@control')){
+                        $this->part('fva-form');
+                    }else{
+                        echo '<div id="fva-form" class="aba-content">
+                            <div class="alert info">
+                            PARABÉNS! O FVA ' . $plugin->getCurrentFvaYear() . ' deste Museu já foi preenchido.
+                            <br /><br />
+                            O Ibram agradece a contribuição no levantamento de informações sobre o campo museal.
+                            <br /><br />
+                            Em caso de dúvidas, alteração de informações ou se você é o(a) responsável pelo museu e quer responder novamente, entre em contato conosco pelo email cpai@museus.gov.br ou pelos telefones (61) 3521-4410, (61) 3521-4291, (61) 3521-4330, (61) 3521-4329, (61) 3521-4292
+                            </div>
+                            </div>';
+                    }
+                }
+            }else{
+                if($spaceEntity->canUser('@control')){
+                    $this->part('fva-form');
                 }
             }
         });
