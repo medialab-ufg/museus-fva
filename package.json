@@ -1,5 +1,9 @@
 {
   "name": "FVA",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/medialab-ufg/museus-fva"
+  },
   "version": "2.0.1",
   "description": "Plugin para aplicação do Formulário de Visitação Anual pelo IBRAM",
   "main": "ng.fva.js",
@@ -17,12 +21,6 @@
     "@uirouter/angularjs": "^1.0.6",
     "angular": "^1.5.5",
     "angular-mocks": "^1.5.5",
-    "inline-source-map": "^0.6.2",
-    "jasmine-core": "^2.8.0",
-    "karma": "^1.7.0",
-    "karma-jasmine": "^1.1.0",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^2.0.4",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
@@ -35,11 +33,17 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.4.0",
     "html-webpack-plugin": "^2.30.1",
+    "inline-source-map": "^0.6.2",
+    "jasmine-core": "^2.8.0",
+    "karma": "^3.1.3",
+    "karma-jasmine": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^2.0.4",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^1.0.1",
-    "url-loader": "^0.5.9",
-    "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.9.1"
+    "url-loader": "^1.1.2",
+    "webpack": "^3.12.0",
+    "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
     "angular-input-masks": "^4.0.0",
@@ -50,7 +54,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
-    "react": "16.2.x",
+    "react": "^16.2.0",
     "react-chartjs-2": "^2.6.4",
     "react-confirm-alert": "^1.0.8",
     "react-dom": "16.2.x",
