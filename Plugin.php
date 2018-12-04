@@ -215,9 +215,6 @@ class Plugin extends \MapasCulturais\Plugin {
 
         });
 
-
-
-
         //Geração da planilha de museus que responderam FVA
         $app->hook('POST(panel.generate-xls)', function() use($app, $plugin) {
             $objPHPExcel = new \PHPExcel();
@@ -227,16 +224,17 @@ class Plugin extends \MapasCulturais\Plugin {
 
             //Recupera um museu para verficar de qual ano são os dados
             $year = 0;
-            foreach ($museusRelatorio[0] as $key => $value) {
-                if (preg_match("/^fva([0-9]{4})$/", $key)){
-                    $year = substr($key,3);
-                    break;
-                }else{
-                    continue;
+            if (is_array($museusRelatorio) && !empty($museusRelatorio)) {
+                foreach ($museusRelatorio[0] as $key => $value) {
+                    if (preg_match("/^fva([0-9]{4})$/", $key)){
+                        $year = substr($key,3);
+                        break;
+                    }else{
+                        continue;
+                    }
                 }
             }
-
-
+            
             // Propriedades do Documento
             $objPHPExcel->getProperties()->setCreator("IBRAM")
             ->setLastModifiedBy("IBRAM")
