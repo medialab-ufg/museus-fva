@@ -32,7 +32,7 @@ module.exports = {
       },
       { 
         test: /\.css$/, 
-        loader: "style-loader!css-loader"
+        loader: 'style-loader!css-loader'
       }
     ],
     rules: [
@@ -41,10 +41,10 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: "babel-loader"
+            loader: 'babel-loader'
           },
           {
-            loader: "eslint-loader",
+            loader: 'eslint-loader',
             options: {
               fix: true
             }
