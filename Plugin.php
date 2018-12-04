@@ -248,22 +248,24 @@ class Plugin extends \MapasCulturais\Plugin {
             $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', 'Museu')
             ->setCellValue('B1', 'Código Museu')
-            ->setCellValue('C1', 'Responsavel')
-            ->setCellValue('D1', 'Email Responsavel')
-            ->setCellValue('E1', 'Telefone Responsavel')
-            ->setCellValue('F1', 'Primeira Participação no FVA')
-            ->setCellValue('G1', 'Motivos Por Não Participar das Edições Anteriores')
-            ->setCellValue('H1', 'Outros Motivos Por Não Participar das Edições Anteriores')
-            ->setCellValue('I1', 'A Instituição realiza contagem de público?')
-            ->setCellValue('J1', 'Técnicas de Contagem Utilizadas')
-            ->setCellValue('K1', 'Outras Técnicas de Contagem Utilizadas')
-            ->setCellValue('L1', 'Justificativa Baixa Visitação')
-            ->setCellValue('M1', 'Total de Visitações')
-            ->setCellValue('N1', 'Observações Sobre Visitação')
-            ->setCellValue('O1', 'Meios Pelos Quais Soube do FVA')
-            ->setCellValue('P1', 'Outras Mídias FVA')
-            ->setCellValue('Q1', 'Opinião Sobre o Questionário FVA')
-            ->setCellValue('R1', 'Data de Resposta');
+            ->setCellValue('C1', 'Município')
+            ->setCellValue('D1', 'UF')
+            ->setCellValue('E1', 'Responsável')
+            ->setCellValue('F1', 'Email Responsável')
+            ->setCellValue('G1', 'Telefone Responsável')
+            ->setCellValue('H1', 'Primeira Participação no FVA')
+            ->setCellValue('I1', 'Motivos Por Não Participar das Edições Anteriores')
+            ->setCellValue('J1', 'Outros Motivos Por Não Participar das Edições Anteriores')
+            ->setCellValue('K1', 'A Instituição realiza contagem de público?')
+            ->setCellValue('L1', 'Técnicas de Contagem Utilizadas')
+            ->setCellValue('M1', 'Outras Técnicas de Contagem Utilizadas')
+            ->setCellValue('N1', 'Justificativa Baixa Visitação')
+            ->setCellValue('O1', 'Total de Visitações')
+            ->setCellValue('P1', 'Observações Sobre Visitação')
+            ->setCellValue('Q1', 'Meios Pelos Quais Soube do FVA')
+            ->setCellValue('R1', 'Outras Mídias FVA')
+            ->setCellValue('S1', 'Opinião Sobre o Questionário FVA')
+            ->setCellValue('T1', 'Data de Resposta');
 
             // Preenche a planilha com os dados
             $plugin->writeSheetLines($museusRelatorio, $objPHPExcel, $plugin, $year);
@@ -441,7 +443,6 @@ class Plugin extends \MapasCulturais\Plugin {
      */
     private function writeSheetLines($museus, $objPHPExcel, $plugin, $year) {
         $line = 2; //A primeira linha destina-se aos cabeçalhos das colunas
-
         foreach($museus as $m) {
             $fva = json_decode($m->{'fva' . $year});
 
@@ -454,25 +455,27 @@ class Plugin extends \MapasCulturais\Plugin {
             $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('A' . (string)$line, $m->name)
                         ->setCellValue('B' . (string)$line, $m->mus_cod)
-                        ->setCellValue('C' . (string)$line, $fva->responsavel->nome->answer)
-                        ->setCellValue('D' . (string)$line, $fva->responsavel->email->answer)
-                        ->setCellValue('E' . (string)$line, $fva->responsavel->telefone->answer)
-                        ->setCellValue('F' . (string)$line, $fva->introducao->primeiraParticipacaoFVA->answer === true ? 'Sim' : 'Não')
-                        ->setCellValue('G' . (string)$line, $plugin->assertBlockAnswers($fva->introducao->questionarioNaoParticipou->motivos))
-                        ->setCellValue('H' . (string)$line, $fva->introducao->questionarioNaoParticipouOutros->answer !== false ? $fva->introducao->questionarioNaoParticipouOutros->text : '')
-                        ->setCellValue('I' . (string)$line, $fva->visitacao->realizaContagem === true ? 'Sim' : 'Não')
-                        ->setCellValue('J' . (string)$line, $plugin->assertBlockAnswers($fva->visitacao->tecnicaContagem))
-                        ->setCellValue('K' . (string)$line, $fva->visitacao->tecnicaContagemOutros->answer !== false ? $fva->visitacao->tecnicaContagemOutros->text : '')
-                        ->setCellValue('L' . (string)$line, $fva->visitacao->justificativaBaixaVisitacao->answer !== null ? $fva->visitacao->justificativaBaixaVisitacao->answer : '')
-                        ->setCellValue('M' . (string)$line, $fva->visitacao->quantitativo->answer !== null ? $fva->visitacao->quantitativo->answer : '')
-                        ->setCellValue('N' . (string)$line, $fva->visitacao->observacoes->answer !== null ? $fva->visitacao->observacoes->answer : '')
-                        ->setCellValue('O' . (string)$line, $plugin->assertBlockAnswers($fva->avaliacao->midias))
-                        ->setCellValue('P' . (string)$line, $fva->avaliacao->midiasOutros->answer !== false ? $fva->avaliacao->midiasOutros->text : '')
-                        ->setCellValue('Q' . (string)$line, $fva->avaliacao->opiniao->text !== null ? $fva->avaliacao->opiniao->text : '')
-                        ->setCellValue('R' . (string)$line, $fva->date !== null ? $fva->date : '');
+                        ->setCellValue('C' . (string)$line, $m->En_Municipio)
+                        ->setCellValue('D' . (string)$line, $m->En_Estado)
+                        ->setCellValue('E' . (string)$line, $fva->responsavel->nome->answer)
+                        ->setCellValue('F' . (string)$line, $fva->responsavel->email->answer)
+                        ->setCellValue('G' . (string)$line, $fva->responsavel->telefone->answer)
+                        ->setCellValue('H' . (string)$line, $fva->introducao->primeiraParticipacaoFVA->answer === true ? 'Sim' : 'Não')
+                        ->setCellValue('I' . (string)$line, $plugin->assertBlockAnswers($fva->introducao->questionarioNaoParticipou->motivos))
+                        ->setCellValue('J' . (string)$line, $fva->introducao->questionarioNaoParticipouOutros->answer !== false ? $fva->introducao->questionarioNaoParticipouOutros->text : '')
+                        ->setCellValue('K' . (string)$line, $fva->visitacao->realizaContagem === true ? 'Sim' : 'Não')
+                        ->setCellValue('L' . (string)$line, $plugin->assertBlockAnswers($fva->visitacao->tecnicaContagem))
+                        ->setCellValue('M' . (string)$line, $fva->visitacao->tecnicaContagemOutros->answer !== false ? $fva->visitacao->tecnicaContagemOutros->text : '')
+                        ->setCellValue('N' . (string)$line, $fva->visitacao->justificativaBaixaVisitacao->answer !== null ? $fva->visitacao->justificativaBaixaVisitacao->answer : '')
+                        ->setCellValue('O' . (string)$line, $fva->visitacao->quantitativo->answer !== null ? $fva->visitacao->quantitativo->answer : '')
+                        ->setCellValue('P' . (string)$line, $fva->visitacao->observacoes->answer !== null ? $fva->visitacao->observacoes->answer : '')
+                        ->setCellValue('Q' . (string)$line, $plugin->assertBlockAnswers($fva->avaliacao->midias))
+                        ->setCellValue('R' . (string)$line, $fva->avaliacao->midiasOutros->answer !== false ? $fva->avaliacao->midiasOutros->text : '')
+                        ->setCellValue('S' . (string)$line, $fva->avaliacao->opiniao->text !== null ? $fva->avaliacao->opiniao->text : '')
+                        ->setCellValue('T' . (string)$line, $fva->date !== null ? $fva->date : '');
 
-            $objPHPExcel->getActiveSheet()->getStyle('R' . (string)$line)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX22);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getStyle('T' . (string)$line)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX22);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(20);
 
             $line++;
         }
