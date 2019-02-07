@@ -1,6 +1,6 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
-import React from'react';
-import{ Button, Radio, Icon } from'antd';
+import React from 'react';
+import { Button } from 'antd';
 
 export default class Excel extends React.Component {
     constructor(props) {
@@ -13,7 +13,8 @@ export default class Excel extends React.Component {
         this.generateXls = this.generateXls.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
+
+    getDerivedStateFromProps(nextProps) {
         if(this.state.filteredMuseums !== nextProps.filteredMuseums) {
             this.setState({
                 filteredMuseums: nextProps.filteredMuseums
