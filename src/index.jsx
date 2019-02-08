@@ -2,21 +2,20 @@
 import React from'react';
 import ReactDOM from'react-dom';
 //import AdminPanel from'./components/Panel/AdminPanel.jsx';
-import _ from'lodash';
-
 import PanelYear from'./components/Panel/PanelYear.jsx';
 import ToggleOpenFVA from'./components/Toggle/ToggleOpenFVA.jsx';
 import SelectFVAYear from'./components/Select/SelectFVAYear.jsx';
 import ComparativeChart from'./components/Panel/ComparativeChart.jsx';
 
 class FVA extends React.Component {
-    constructor() {
-        super();
-
+    constructor(props) {
+        super(props);
         this.state = {
             selectedYear: null,
             openYear:     null
         };
+        this.updateOpenYear = this.updateOpenYear.bind(this);
+        this.updateYear = this.updateYear.bind(this);
     }
 
     updateYear(e) {
@@ -31,12 +30,12 @@ class FVA extends React.Component {
         return(
             <div>
                 <div id="toobar-fva">
-                    <ToggleOpenFVA updateOpenYear={this.updateOpenYear.bind(this)}/>
-                    <SelectFVAYear updateYear={this.updateYear.bind(this)}/>
+                    <ToggleOpenFVA updateOpenYear={this.updateOpenYear} />
+                    <SelectFVAYear updateYear={this.updateYear} />
                 </div>
 
                 <PanelYear selectedYear={this.state.selectedYear} openYear={this.state.openYear}/>
-                
+
                 <ComparativeChart />
             </div>
         );
