@@ -96,7 +96,7 @@ input::-webkit-inner-spin-button {
         size: A4 portrait;
     }
 
-    .sidebar, .register-museum, #main-header, .servico, header, footer, #print-button {
+    .sidebar, .register-museum, #main-header, .servico, header, footer, #print-button, #fva-nota .no-print {
         display: none;
     }
 

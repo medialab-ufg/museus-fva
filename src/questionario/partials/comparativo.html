@@ -1,9 +1,9 @@
 <div id="fva-nota">
-    <h3>Evolução das visitas em anos</h3>
+    <h3 class="no-print"> Evolução das visitas em anos </h3>
     
-    <canvas id="chartFvaVisitas" width="400" height="110"></canvas>
+    <canvas id="chartFvaVisitas" width="400" height="110" class="no-print"></canvas>
         
-    <div class="servico">        
+    <div>
         <header class="entinty-calendar-header clearfix">
             <h6 style="float:left;margin:3px 0 0;">Respostas dos Questionários</h6>
 
@@ -114,6 +114,7 @@
 
             </tbody>
         </table>
-        <input id="imprimirBtn" type="submit" value="Imprimir" onclick="window.print()" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente">
+        <input id="imprimirBtn" class="no-print" type="submit" value="Imprimir"
+               onclick="window.print()" ng-if="repostaFvaSelect.respostas.termosCompromisso.ciente" />
     </div>
 </div>
