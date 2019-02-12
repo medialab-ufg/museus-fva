@@ -6,6 +6,7 @@ import PanelYear from'./components/Panel/PanelYear.jsx';
 import ToggleOpenFVA from'./components/Toggle/ToggleOpenFVA.jsx';
 import SelectFVAYear from'./components/Select/SelectFVAYear.jsx';
 import ComparativeChart from'./components/Panel/ComparativeChart.jsx';
+import ErrorBoundary from'./components/Exceptions/ErrorBoundary.jsx';
 
 class FVA extends React.Component {
     constructor(props) {
@@ -30,13 +31,19 @@ class FVA extends React.Component {
         return(
             <div>
                 <div id="toobar-fva">
-                    <ToggleOpenFVA updateOpenYear={this.updateOpenYear} />
-                    <SelectFVAYear updateYear={this.updateYear} />
+                    <ErrorBoundary>
+                        <ToggleOpenFVA updateOpenYear={this.updateOpenYear} />
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <SelectFVAYear updateYear={this.updateYear} />
+                    </ErrorBoundary>
                 </div>
 
-                <PanelYear selectedYear={this.state.selectedYear} openYear={this.state.openYear}/>
+                <ErrorBoundary>
+                    <PanelYear selectedYear={this.state.selectedYear} openYear={this.state.openYear}/>
+                </ErrorBoundary>
 
-                <ComparativeChart />
+                <ErrorBoundary> <ComparativeChart /> </ErrorBoundary>
             </div>
         );
     }
