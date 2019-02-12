@@ -5,7 +5,7 @@
     "url": "https://github.com/medialab-ufg/museus-fva"
   },
   "version": "2.0.1",
-  "description": "Plugin para aplicação do Formulário de Visitação Anual pelo IBRAM",
+  "description": "Plugin para uso com o Mapas Culturais - Formulário de Visitação Anual do IBRAM",
   "main": "ng.fva.js",
   "scripts": {
     "build": "webpack",
@@ -14,8 +14,9 @@
   },
   "keywords": [],
   "contributors": [
+    "Ari Mourão <github.com/arimourao>",
     "Asafe Ramos <asafe@asaferamos.com>",
-    "Ari Mourão"
+    "Rodrigo Guimarães <github.com/r-guimaraes>"
   ],
   "license": "MIT",
   "devDependencies": {
