@@ -55,10 +55,6 @@ module.exports = {
     devtool: 'inline-source-map',
     plugins: [
         HtmlWebpackPluginConfig,
-        new UglifyJSPlugin(),
-        new webpack.ProvidePlugin({
-            '$': 'jquery/dist/jquery.js',
-            'jQuery': 'jquery/dist/jquery.js'
-        })
+        new UglifyJSPlugin()
     ]
 };
