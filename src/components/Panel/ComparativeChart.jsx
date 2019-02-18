@@ -30,8 +30,7 @@ export default class ComparativeChart extends React.Component {
         });
     }
 
-    render() {        
-
+    render() {
         const data = {
             labels: this.state.years,
             datasets: [
@@ -91,13 +90,15 @@ export default class ComparativeChart extends React.Component {
                 }
             }
         };
-    
-    
+
         return(
-            <div id="chart-years">
-                <h2>Respostas x Anos</h2>
-                <Line data={data} width={50} height={20} options={options}/>
-            </div>
+            (this.state.years && this.state.count) ?
+                <div id="chart-years">
+                    <h2>Respostas x Anos</h2>
+                    <Line data={data} width={50} height={20} options={options}/>
+                </div>
+                :
+                ''
         );
     }
 }
