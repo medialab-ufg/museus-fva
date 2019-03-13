@@ -19,7 +19,7 @@ module.exports = {
             { 
                 test: /\.jsx?$/, 
                 loader: 'babel-loader', 
-                exclude: /node_modules/,
+                exclude: /node_modules/
             },
             { 
                 test: /\.css$/, 
@@ -50,11 +50,15 @@ module.exports = {
                 test: /\.(png|woff|woff2|eot|ttf|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'url-loader'
             }
-        ],
+        ]
     },
     devtool: 'inline-source-map',
     plugins: [
         HtmlWebpackPluginConfig,
-        new UglifyJSPlugin()
+        new UglifyJSPlugin(),
+        new webpack.ProvidePlugin({
+            '$': 'jquery/dist/jquery.js',
+            'jQuery': 'jquery/dist/jquery.js'
+        })
     ]
 };

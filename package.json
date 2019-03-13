@@ -9,7 +9,7 @@
   "main": "ng.fva.js",
   "scripts": {
     "build": "webpack",
-    "build-dev": "webpack --config webpack.config.js --display-error-details",
+    "build-dev": "webpack --config webpack.config.js --display-error-details --watch",
     "start:dev": "webpack-dev-server"
   },
   "keywords": [],
@@ -54,6 +54,7 @@
     "antd": "^3.2.1",
     "chart.js": "^2.7.2",
     "chartjs-plugin-datalabels": "^0.2.0",
+    "jquery": "^3.3.1",
     "karma-chrome-launcher": "^2.2.0",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
