@@ -9,7 +9,7 @@
   "main": "ng.fva.js",
   "scripts": {
     "build": "webpack",
-    "build-dev": "webpack --config webpack.config.js --display-error-details --watch",
+    "build-dev": "webpack --env dev --progress --config webpack.config.js --display-error-details --watch",
     "start:dev": "webpack-dev-server"
   },
   "keywords": [],
@@ -60,6 +60,7 @@
     "path": "^0.12.7",
     "react": "^16.2.0",
     "react-chartjs-2": "^2.6.4",
+    "react-confirm-alert": "^2.3.0",
     "react-dom": "16.2.x",
     "react-super-select": "^1.0.9",
     "react-table": "^6.6.0",
