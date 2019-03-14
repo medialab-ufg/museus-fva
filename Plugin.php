@@ -163,19 +163,21 @@ class Plugin extends \MapasCulturais\Plugin {
             //Recupera todas json com resposta dos FVA's do espaço e joga no objeto globbal MapasCulturais.respostasFva
             if(!is_null($spaceEntity)){
                 $years = json_decode($plugin->fvaYearsAvailable());
-                $fvas  = [];
-                foreach ($years as $year) {
-                    $json = json_decode($spaceEntity->getMetadata('fva' . $year->year));
-                    
-                    if($json != null){
+                if (is_array($years) && !empty($years)) {
+                    $fvas  = [];
+                    foreach ($years as $year) {
+                        $json = json_decode($spaceEntity->getMetadata('fva' . $year->year));
+
+                        if($json != null){
                             $fvas[] = array(
                                 'ano'       => $year->year,
                                 'respostas' => $json
                             );
+                        }
                     }
-                }
 
-                $app->view->jsObject['respostasFva'] = json_encode($fvas);
+                    $app->view->jsObject['respostasFva'] = json_encode($fvas);
+                }
             }
             
             /**
@@ -402,13 +404,14 @@ class Plugin extends \MapasCulturais\Plugin {
 
         //Registra todos os metadados de todos os FVAs realizados
         $fvas = json_decode($this->fvaYearsAvailable(),true);
-        foreach ($fvas as $key => $year) {
-            $this->registerSpaceMetadata('fva'.$year['year'], array(
-                'label'   => 'fva'.$year['year'],
-                'private' => true
-            ));
+        if (is_array($fvas)) {
+            foreach ($fvas as $key => $year) {
+                $this->registerSpaceMetadata('fva'.$year['year'], array(
+                    'label'   => 'fva'.$year['year'],
+                    'private' => true
+                ));
+            }
         }
-
 
         $metadata = [
             'MapasCulturais\Entities\Subsite' => [
