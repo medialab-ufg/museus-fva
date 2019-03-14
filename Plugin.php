@@ -79,14 +79,14 @@ class Plugin extends \MapasCulturais\Plugin {
 
         //Retorna json com os números de FVAs respondidos em cada ano
         $app->hook('GET(panel.fvaAnalytics)', function() use($app, $plugin){
-            // if (!$spaceEntity->canUser('@control')
-                // die;
             
             $years = json_decode($plugin->fvaYearsAvailable(),true);
             $_years = [];
-            foreach ($years as $key => $year) {
-                $_years[$key]['year']  = $year['year'];
-                $_years[$key]['count'] = count($app->repo('SpaceMeta')->findBy(array('key' => 'fva' . $year['year'])));
+            if (is_array($years) && !empty($years)) {
+                foreach ($years as $key => $year) {
+                    $_years[$key]['year']  = $year['year'];
+                    $_years[$key]['count'] = count($app->repo('SpaceMeta')->findBy(array('key' => 'fva' . $year['year'])));
+                }
             }
             
 			echo json_encode($_years);
@@ -309,19 +309,21 @@ class Plugin extends \MapasCulturais\Plugin {
         $app->hook('GET(panel.fvaAnalyticsSpace)', function () use ($app, $plugin){
             $id    = $app->view->controller->data['id'];
             $space = $app->repo('Space')->find($id);
+            $fvas  = [];
             
             $years = json_decode($plugin->fvaYearsAvailable());
-            $fvas  = [];
-            foreach ($years as $year) {
-                $json = json_decode($space->getMetadata('fva' . $year->year));
-                
-                $fvas[$year->year] = 0;
-                if($json != null){
-                    if($json->visitacao->quantitativo->answer != null)
-                        $fvas[$year->year] = $json->visitacao->quantitativo->answer;
+
+            if (is_array($years)) {
+                foreach ($years as $year) {
+                    $json = json_decode($space->getMetadata('fva' . $year->year));
+
+                    $fvas[$year->year] = 0;
+                    if($json != null){
+                        if($json->visitacao->quantitativo->answer != null)
+                            $fvas[$year->year] = $json->visitacao->quantitativo->answer;
+                    }
                 }
             }
-            
             echo json_encode($fvas);
         });
 
