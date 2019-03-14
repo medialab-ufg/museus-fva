@@ -1,11 +1,11 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
 import React from'react';
-import{ Button, Radio, Icon } from'antd';
+import ReactConfirmAlert, { confirmAlert } from'react-confirm-alert';
+import'react-confirm-alert/src/react-confirm-alert.css';
 
 export default class DeleteButton extends React.PureComponent {
     constructor(props) {
         super(props);
-
         this.state = {
             museumId: this.props.museumId
         };
@@ -16,7 +16,6 @@ export default class DeleteButton extends React.PureComponent {
 
     deleteClick(museuId) {
         const self = this;
-
         $.ajax({
             url: MapasCulturais.createUrl('panel', 'resetFva'),
             type: 'POST',
@@ -31,16 +30,22 @@ export default class DeleteButton extends React.PureComponent {
         confirmAlert({
             title: 'Reabrir FVA',
             message: 'Tem certeza que deseja reabrir o questionário FVA para este museu?',
-            confirmLabel: 'Sim',
-            cancelLabel: 'Não',
-            onConfirm: () => this.deleteClick(this.state.museumId),
-            onCancel: () => null
+            buttons: [
+                {
+                    label: 'Sim',
+                    onClick: () => this.deleteClick(this.state.museumId)
+                },
+                {
+                    label: 'Não',
+                    onClick: () => null
+                }
+            ]            
         });
     }
 
     render() {
         return(
-            <Button type="primary" size='small' onClick={this.showConfirmDialog}>Reabir</Button>
+            <a onClick={this.showConfirmDialog.bind(this)}>Reabir</a>
         );
     }
 }
