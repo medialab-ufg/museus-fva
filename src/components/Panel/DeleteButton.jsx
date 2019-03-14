@@ -19,7 +19,7 @@ export default class DeleteButton extends React.PureComponent {
         $.ajax({
             url: MapasCulturais.createUrl('panel', 'resetFva'),
             type: 'POST',
-            data: JSON.stringify(this.state.museumId),
+            data: JSON.stringify(museuId),
             success: function(result) {
                 self.props.parentHandler();
             }
