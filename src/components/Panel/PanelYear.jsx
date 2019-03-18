@@ -107,7 +107,7 @@ export default class PanelYear extends React.Component {
         }.bind(this));
     }
 
-    getDerivedStateFromProps(nextProps) {
+    componentWillReceiveProps(nextProps) {
         //Se houver diferença entre o ano do state e o da props, atualiza os dados
         if(nextProps.selectedYear !== this.state.selectedYear) {
             this.setState({selectedYear: nextProps.selectedYear});

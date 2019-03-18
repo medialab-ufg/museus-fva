@@ -14,7 +14,7 @@ export default class Excel extends React.Component {
     }
 
 
-    getDerivedStateFromProps(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if(this.state.filteredMuseums !== nextProps.filteredMuseums) {
             this.setState({
                 filteredMuseums: nextProps.filteredMuseums
