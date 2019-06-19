@@ -1,10 +1,10 @@
 /* eslint no-console: "off", no-debugger: "off", no-unused-vars: "off", react/prop-types:"off", no-undef: "off", react/jsx-no-undef: "off", react/no-direct-mutation-state: "off" */
-import React from 'react';
-import PieChart from './PieChart.jsx';
-import MuseusTable from './MuseusTable.jsx';
-import Excel from './Excel.jsx';
-import _ from 'lodash';
-import './panel.css';
+import React from'react';
+import PieChart from'./PieChart.jsx';
+import MuseusTable from'./MuseusTable.jsx';
+import Excel from'./Excel.jsx';
+import _ from'lodash';
+import'./panel.css';
 
 export default class PanelYear extends React.Component {
 
@@ -52,11 +52,13 @@ export default class PanelYear extends React.Component {
         let totalPercent = [];
 
         //tratamento para os casos de 100%, 0% e os parcialmente respondidos
-        if (percentualRespondido === 100) {
-           totalPercent = [100, 0];
-        } else if(percentualRespondido === 0) {
-           totalPercent = [0, 100];
-        } else {
+        if(percentualRespondido === 100) {
+            totalPercent = [100, 0];
+        }
+        else if(percentualRespondido === 0) {
+            totalPercent = [0, 100];
+        }
+        else{
             totalPercent = [percentualRespondido, 100 - percentualRespondido];
         }
 
