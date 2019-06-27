@@ -26,7 +26,9 @@ export default class Excel extends React.Component {
         $.ajax({
             url: MapasCulturais.createUrl('panel', 'generate-xls'),
             type: 'POST',
-            data: JSON.stringify(this.state.filteredMuseums)
+            data: JSON.stringify(this.state.filteredMuseums),
+            contentType: 'application/json',
+            dataType: 'json'
         }).done(function(data) {
             if(data) {
                 let res = JSON.parse(data);
@@ -41,6 +43,7 @@ export default class Excel extends React.Component {
             }
         }).fail(function(jqXHR, textStatus) {
             console.log(textStatus + ': Não foi possível gerar o Relatório do FVA.');
+            console.log(jqXHR.responseText);
         });
     }
 
